@@ -14,12 +14,10 @@ window.onload = function () {
     const reponses = document.querySelectorAll(".reponseclass");
     console.log(reponses);
 
-    document.getElementById("Question").addEventListener("keyup", function (event) {
+    document.getElementById("Question").addEventListener("keypress", function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-         //   alert('Enter is pressed in the form');
             document.getElementById("searchForm").requestSubmit();
-
         }
     });
 
@@ -55,7 +53,6 @@ window.onload = function () {
     // cacher l'indicateur de chargement
     hideBusyIndicator();
 
-  
     Question.focus()
 };
 
@@ -63,6 +60,14 @@ window.onload = function () {
 async function postData(event) {
 
     event.preventDefault();
+
+    const question = document.getElementById("Question").value;
+    if (question.length == 0) {
+        alert("La question doit être saisie !!");
+        return false;
+    }
+
+    document.getElementById("rechercher").disabled = true;
 
     // empêcher la saisie pendant la soumission du formulaire
     preventInputData(true);
@@ -72,6 +77,9 @@ async function postData(event) {
 
     const f = document.getElementById("searchForm");
     const formData = new FormData(f);
+
+    const modeleId = document.getElementById("ModeleId").value;
+    formData.append("ModeleId", modeleId);
     console.log(formData);
 
     const url = $('#mapconversation').data('url-soumettre-formulaire-link');
@@ -92,7 +100,7 @@ async function postData(event) {
             throw new Error("Une erreur s'est produite !");
         }
 
-  //      alert(result);
+        //      alert(result);
 
         // rendre l'IHM disponible pour la saisie
         preventInputData(false);
@@ -107,6 +115,7 @@ async function postData(event) {
         showResponse(result);
 
         document.getElementById("Question").value = "";
+        document.getElementById("rechercher").disabled = false;
 
 
     } catch (error) {
@@ -153,6 +162,7 @@ function preventInputData(actionValue = false) {
 
 function setDynamicHeight(element) {
     element.style.height = 0; // set the height to 0 in case of it has to be shrinked
+    console.log(`element.scrollHeight = ${element.scrollHeight} pour élément ${element.name}`)
     element.style.height = element.scrollHeight + 'px'; // set the dynamic height
 }
 
@@ -161,18 +171,19 @@ function showResponse(data) {
 
     const nextId = getReponseMaxId();
 
-    const dataWithPrefix = `IA : ${data}`;
-    createTextareaAnswer(nextId, dataWithPrefix);
+    //  const dataWithPrefix = `IA : ${data}`;
+    createTextareaAnswer(nextId, data);
 
     const id = `reponseId-${nextId}`;
 
     const answer = document.getElementById(id);
 
-//    alert(answer.name);
+    //    alert(answer.name);
+    answer.value = data;
 
     setDynamicHeight(answer);
 
-    answer.value = data;
+
 }
 
 
@@ -183,7 +194,7 @@ function getReponseMaxId() {
     id = parseInt(id, 10) + 1;
 
     console.log(`getReponseMaxId après incrément = ${id}`);
-  
+
     // stocker la nouvelle valeur
     storeNewMaxId(REPONSE_VALEUR_MAX_ID, id);
 
@@ -193,6 +204,19 @@ function getReponseMaxId() {
 
 
 function createTextareaAnswer(nextId, content) {
+    let myDiv = document.createElement('div');
+    myDiv.id = `divreponseid-${nextId}`;
+    myDiv.className = 'container';
+
+
+    let myImg = document.createElement('img');
+    const iconPath = $('#mapconversation').data('icon-path-ollama');
+    myImg.src = iconPath
+    myImg.height = "32";
+    myImg.width = "32";
+
+    myDiv.appendChild(myImg);
+
     var input = document.createElement('textarea');
     input.name = `reponseId-${nextId}`;
     input.id = `reponseId-${nextId}`;
@@ -201,24 +225,41 @@ function createTextareaAnswer(nextId, content) {
     input.className = 'reponseclass';
     input.innerText = content;
 
+    myDiv.appendChild(input);
+
     const parent = document.querySelector("#showQuestionAnswer");
 
-    parent.appendChild(input);
+    parent.appendChild(myDiv);
 }
 
 
 function createTextareaQuestion(nextId, content) {
-    var input = document.createElement('textarea');
+    const initialesUser = $('#mapconversation').data('url-initiales-user');
+
+    let myDiv = document.createElement('div');
+    myDiv.id = `divquestionid-${nextId}`;
+    myDiv.className = 'container';
+    myDiv.innerText = `${initialesUser}`;
+
+    //let mySpan = document.createElement('span');
+    //mySpan.innerText = `${initialesUser}`;
+    //mySpan.width = "50px";
+    //mySpan.display="inline-block";
+
+    //myDiv.appendChild(mySpan);
+
+    let input = document.createElement('textarea');
     input.name = `questionId-${nextId}`;
     input.id = `questionId-${nextId}`;
-
     input.readOnly = true;
     input.className = 'questionclass';
     input.innerText = content;
 
+    myDiv.appendChild(input);
+
     const parent = document.querySelector("#showQuestionAnswer");
 
-    parent.appendChild(input);
+    parent.appendChild(myDiv);
 }
 
 function getQuestionMaxId() {
@@ -256,7 +297,7 @@ function showQuestion() {
 
     const question = document.getElementById(id);
 
- //   alert(`question = ${question}`);
+    //   alert(`question = ${question}`);
 
     setDynamicHeight(question);
 

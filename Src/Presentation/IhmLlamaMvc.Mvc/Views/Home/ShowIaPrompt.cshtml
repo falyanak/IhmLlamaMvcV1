@@ -17,51 +17,64 @@
     </header>
 
     <main class="main-content">
-        <div class="sticky">
-            @* <button id="resetButton" type="reset">Réinitialiser</button> *@
-            <button id="close-sidebar">
-                <img src="~/images/less-than-solid.svg"
-                     alt="Replier" height="24" width="24"
-                     title="Replier" />
+        <partial name="_NavBarPartial" />
+        @*   <div class="sticky">
+
+            <div class="navbargrid">
+                <div>
+                    <button id="close-sidebar">
+                        <img src="~/images/less-than-solid.svg"
+                             alt="Replier" height="24" width="24"
+                             title="Replier" />
+                    </button>
+                    <button id="buttonload">
+                        <i class="fa fa-spinner fa-spin fa-xl"></i>
+                    </button>
+                </div>
+                <div>
+                    <button id="saveButton">
+                        <img src="~/images/save-solid.svg"
+                             alt="Enregistrer" height="24" width="24"
+                             title="Enregistrer le chat" />
+                    </button>
+
+                    <button id="resetButton">
+                        <img src="~/images/plus-solid.svg"
+                             alt="Nouveau chat" height="24" width="24"
+                             title="Nouveau chat" />
+                    </button>
+                </div>
+            </div>
+        </div> *@
+
+        <div id="showQuestionAnswer" class="center"></div>
+
+        <form class="container" asp-action="PoserQuestion" method="post" id="searchForm" role="form">
+
+            <textarea class="questionclass svg-demo" asp-for="Question"
+                      placeholder="Saisissez votre question ici..."></textarea>
+
+            <span asp-validation-for="Question" class="text-danger"></span>
+            <br/>
+
+            <button type="submit" id="rechercher">
+                <img src="~/images/circle-play-solid.svg"
+                     alt="soumettre" height="36" width="48"
+                     title="Soumettre la question"/>
             </button>
+        </form>
+
+    </main>
+
+    <section id="sidebar" class="left-sidebar collapsed">
+        <div class="alignRight">
             <button id="show-sidebar">
                 <img src="~/images/greater-than-solid.svg"
                      alt="Deplier" height="24" width="24"
                      title="Déplier" />
             </button>
 
-            <button id="resetButton">
-                <img src="~/images/plus-solid.svg"
-                     alt="Nouveau chat" height="24" width="24"
-                     title="Nouveau chat" />
-            </button>
-            
-            <partial name="_BusyIndicatorPartial" />
-
-            <button id="buttonload" >
-                <i class="fa fa-spinner fa-spin fa-xl"></i>
-            </button>
         </div>
-
-        <div id="showQuestionAnswer" class="center"></div>
-
-        <div>
-            <partial name="_BusyIndicatorPartial" />
-        </div>
-
-        <form class="center" asp-action="PoserQuestion" method="post" id="searchForm" role="form">
-
-            <textarea class="questionclass" asp-for="Question" placeholder="Saisissez votre question ici..."></textarea>
-            <span asp-validation-for="Question" class="text-danger"></span>
-            <br />
-
-            <button type="submit" id="rechercher">Rechercher</button>
-        </form>
-
-    </main>
-
-    <section id="sidebar" class="left-sidebar">
-
         <ul>
             <li>
                 <a href="#">Historique</a>
@@ -77,7 +90,10 @@
 </div>
 
 <div id="mapconversation"
-     data-url-soumettre-formulaire-link="@Url.Content("~/Home/PoserQuestion")">
+     data-url-soumettre-formulaire-link="@Url.Content("~/Home/PoserQuestion")"
+     data-url-initiales-user="@Url.Content(@Model.InitialesAgent)"
+     data-icon-path-ollama="@Url.Content("~/images/ollama.png")">
+    >
 </div>
 <script src="~/js/ShowIaprompt.js"></script>
 

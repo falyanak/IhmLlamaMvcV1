@@ -28,7 +28,7 @@ public partial class HomeController
         IEnumerable<SelectListItem> listeFormatee = ConstruireListeFormateeModelesIA(listeModeles);
 
         conversationViewModel.IdentiteAgent = $"{agentPermissions.Prenom} {agentPermissions.Nom}";
-        conversationViewModel.InitialesAgent = $"{agentPermissions.Prenom.First()} {agentPermissions.Nom.First()}";
+        conversationViewModel.InitialesAgent = $"{agentPermissions.Prenom.First()}{agentPermissions.Nom.First()}";
         conversationViewModel.listeModeles = listeFormatee;
         conversationViewModel.listeQuestions = new List<Question>();
 
