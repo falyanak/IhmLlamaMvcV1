@@ -15,13 +15,13 @@
             <p class="right">Bonjour @Model.IdentiteAgent</p>
         </div>
     </header>
-    
+
     <div class="espace"></div>
 
     <main class="main-content">
-       
+
         <partial name="_NavBarPartial" />
-       
+
         <div id="showQuestionAnswer" class="center"></div>
 
         <form class="container" asp-action="PoserQuestion" method="post" id="searchForm" role="form">
@@ -30,12 +30,12 @@
                       placeholder="Saisissez votre question ici..."></textarea>
 
             <span asp-validation-for="Question" class="text-danger"></span>
-            <br/>
+            <br />
 
             <button type="submit" id="rechercher">
                 <img src="~/images/play.png"
                      alt="soumettre" height="32" width="32"
-                     title="Soumettre la question"/>
+                     title="Soumettre la question" />
             </button>
         </form>
 
@@ -44,22 +44,24 @@
     <section id="sidebar" class="left-sidebar collapsed">
         <h5 class="center">Historique</h5>
         @*  <div class="alignRight">
-            <button id="show-sidebar">
-                <img src="~/images/greater-than-solid.svg"
-                     alt="Deplier" height="24" width="24"
-                     title="Déplier" />
-            </button>
+        <button id="show-sidebar">
+        <img src="~/images/greater-than-solid.svg"
+        alt="Deplier" height="24" width="24"
+        title="Déplier" />
+        </button>
 
         </div> *@
-        <ul id="listeHistorique">
-            <li>
-                <a href="#">Hello 26/07/2024</a>
+        <div>
+            <ul id="listeHistorique">
+             @*    <li>
+                    <a href="#">Hello 26/07/2024</a>
 
-            </li>
-            <li>
-                <a href="#">L'albatros du 25/07/2024</a>
-            </li>
-        </ul>
+                </li>
+                <li>
+                    <a href="#">L'albatros du 25/07/2024</a>
+                </li> *@
+            </ul>
+        </div>
 
 
     </section>
@@ -69,8 +71,7 @@
      data-url-soumettre-formulaire-link="@Url.Content("~/Home/PoserQuestion")"
      data-url-initiales-user="@Url.Content(@Model.InitialesAgent)"
      data-icon-path-ollama="@Url.Content("~/images/ollama.png")"
-     data-icon-path-phi="@Url.Content("~/images/phi.png")"
-     >
+     data-icon-path-phi="@Url.Content("~/images/phi.png")">
 </div>
 <script src="~/js/ShowIaprompt.js"></script>
 

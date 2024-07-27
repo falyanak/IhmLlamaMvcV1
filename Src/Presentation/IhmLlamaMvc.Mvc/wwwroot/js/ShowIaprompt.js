@@ -326,14 +326,33 @@ function showQuestion() {
     question.value = data;
 }
 
-function CreerListeHistorique(listElement) {
-    var text = '<ul>';
+function CreerListeHistorique() {
+    var grabList = document.getElementById('listeHistorique');
+
+    for (let i = 0; i < 6; i++) {
+        text = `INFO ${i}`
+        let entry = document.createElement('li');
+        entry.id = `li-id-${i}`;
+        entry.className = "ItemNotChecked";
+        entry.appendChild(document.createTextNode(text));
+
+        /*Add a button to each LI */
+        let button = document.createElement('button');
+        button.innerText = 'Click me!';
+        entry.appendChild(button);
+
+
+        grabList.appendChild(entry);
+    }
+}
+function CreerListeHistorique1() {
+ //   var text = '<ul>';
     for (var i = 0; i < 6; i++) {
 
-        text = text + "<li class='file'><a href=''>Subfile " + i + "</a></li>";
+  //      text = text + "<li class='file'><a>Subfile " + i + "</a></li>";
 
     }
-    text = text + '</ul>';
+ //   text = text + '</ul>';
 
-    document.getElementById('listeHistorique').innerHTML = text;
+ //   document.getElementById('listeHistorique').innerHTML = text;
 }
