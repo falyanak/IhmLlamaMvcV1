@@ -5,18 +5,21 @@
 <div class="left-sidebar-grid">
 
     <header class="header">
-        <div class='grid'>
-            <p class="left">SI - DGCCRF </p>
+        <div class='headergrid'>
+            <p class="left">Chat multi IA LLM </p>
             <span id="headerlabel" class="center">
-                Conversation avec LLM
+                Chattez avec
                 <select asp-for="ModeleId" asp-items="@Model.listeModeles">
                 </select>
             </span>
             <p class="right">Bonjour @Model.IdentiteAgent</p>
         </div>
     </header>
+    
+    <div class="espace"></div>
 
     <main class="main-content">
+       
         <partial name="_NavBarPartial" />
        
         <div id="showQuestionAnswer" class="center"></div>
@@ -31,7 +34,7 @@
 
             <button type="submit" id="rechercher">
                 <img src="~/images/circle-play-solid.svg"
-                     alt="soumettre" height="36" width="48"
+                     alt="soumettre" height="34" width="46"
                      title="Soumettre la question"/>
             </button>
         </form>
@@ -39,21 +42,22 @@
     </main>
 
     <section id="sidebar" class="left-sidebar collapsed">
-        <div class="alignRight">
+        <h5 class="center">Historique</h5>
+        @*  <div class="alignRight">
             <button id="show-sidebar">
                 <img src="~/images/greater-than-solid.svg"
                      alt="Deplier" height="24" width="24"
                      title="Déplier" />
             </button>
 
-        </div>
+        </div> *@
         <ul>
             <li>
-                <a href="#">Historique</a>
+                <a href="#">Hello 26/07/2024</a>
 
             </li>
             <li>
-                <a href="#">requête 1</a>
+                <a href="#">L'albatros du 25/07/2024'</a>
             </li>
         </ul>
 
@@ -65,7 +69,6 @@
      data-url-soumettre-formulaire-link="@Url.Content("~/Home/PoserQuestion")"
      data-url-initiales-user="@Url.Content(@Model.InitialesAgent)"
      data-icon-path-ollama="@Url.Content("~/images/ollama.png")">
-    >
 </div>
 <script src="~/js/ShowIaprompt.js"></script>
 

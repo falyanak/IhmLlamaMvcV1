@@ -1,7 +1,7 @@
 ﻿body {
-    background-color: GrayText;
-   /* font-family: "Segoe UI", Arial, sans-serif;*/
+    /*background-color: GrayText;*/
 }
+
 html {
     font-family: Arial, sans-serif;
 }
@@ -29,25 +29,26 @@ html {
     /* assign columns to grid areas */
     .left-sidebar-grid > .header {
         grid-area: header;
-        background-color:cornflowerblue;
+        background-color: cornflowerblue;
         color: black;
         text-align: center;
         font-size: 20px;
-        /*font-weight: bold;*/
     }
 
     .left-sidebar-grid > .main-content {
         grid-area: main-content;
+        /*  grid-area: left-sidebar-start / main-content-start / main-content-end / main-content-end;*/
+        /*grid-area: left-sidebar-end / main-content-end  / main-content-end / main-content-end;*/
         background: #fff;
     }
 
     .left-sidebar-grid > .left-sidebar {
         grid-area: left-sidebar;
-        background-color: lightgrey;
         transform: translateX(-100%);
         transition: 200ms ease;
         z-index: 1;
         position: relative;
+        border: 1px solid #ccc;
     }
 
         .left-sidebar-grid > .left-sidebar.collapsed {
@@ -61,7 +62,6 @@ textarea {
     box-sizing: border-box;
     font-size: 14px;
     border: 1px solid #ccc;
-    max-width: 90%;
     height: 41px;
     width: 80%;
     overflow: hidden;
@@ -70,7 +70,7 @@ textarea {
 
 /* alignement dans le header*/
 
-.grid {
+.headergrid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
 }
@@ -88,7 +88,7 @@ p.center {
 }
 
 p.right {
-    font-size: .8rem;
+    font-size: .9rem;
 }
 
 .left {
@@ -105,7 +105,6 @@ div.sticky {
     top: 0;
     background-color: whitesmoke;
     height: 3rem;
-    min-height: 3rem;
 }
 
 .alignRight {
@@ -114,17 +113,14 @@ div.sticky {
 
 .navbargrid {
     display: grid;
-    grid-template-columns: repeat(6, 3fr);
-    align-items: center;
+    grid-template-columns: repeat(8, 1fr);
+    align-items: start;
 }
 
 /* tablet breakpoint */
 @media (min-width:768px) {
     .left-sidebar-grid {
         grid-template-columns: repeat(5, 1fr);
-        /*grid-template-columns: repeat( auto-fill, minmax(250px, 1fr) );*/
-
-        grid-template-rows: 60px 660px;
         grid-template-areas:
             'header header header header header'
             'left-sidebar main-content main-content main-content main-content';
@@ -135,12 +131,16 @@ div.sticky {
 .container {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    align-items:center;
+    justify-content:center;
 }
 
 
 select {
     font-size: 16px;
     padding: 5px;
+}
+
+#sidebar > ul > li {
+    font-size: 14px;
 }

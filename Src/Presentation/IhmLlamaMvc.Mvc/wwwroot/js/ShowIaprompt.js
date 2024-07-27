@@ -38,17 +38,17 @@ window.onload = function () {
     storeObjectInSessionStorage(QUESTION_VALEUR_MAX_ID, 0);
     storeObjectInSessionStorage(REPONSE_VALEUR_MAX_ID, 0);
 
-    const sidebar = document.querySelector('#sidebar');
-    const showSidebar = document.querySelector('#show-sidebar');
-    const closeSidebar = document.querySelector('#close-sidebar');
+    //const sidebar = document.querySelector('#sidebar');
+    //const showSidebar = document.querySelector('#show-sidebar');
+    //const closeSidebar = document.querySelector('#close-sidebar');
 
-    showSidebar.onclick = () => {
-        sidebar.classList.toggle('collapsed');
-    };
+    //showSidebar.onclick = () => {
+    //    sidebar.classList.toggle('collapsed');
+    //};
 
-    closeSidebar.onclick = () => {
-        sidebar.classList.toggle('collapsed');
-    };
+    //closeSidebar.onclick = () => {
+    //    sidebar.classList.toggle('collapsed');
+    //};
 
     // cacher l'indicateur de chargement
     hideBusyIndicator();
@@ -117,6 +117,8 @@ async function postData(event) {
         document.getElementById("Question").value = "";
         document.getElementById("rechercher").disabled = false;
 
+    //    document.getElementsByClassName("left-sidebar-grid").style.gridTemplateRows = "auto";
+
 
     } catch (error) {
         console.log("Error:", error);
@@ -142,7 +144,7 @@ function errorFunc() {
 function resetConversation() {
     // Vide la zone de texte
     document.getElementById("Question").value = "";
-    document.getElementById("Question").style.height = "10%";
+    document.getElementById("Question").style.height = "41px";
 
     // effacer les questions et réponses
     const parent = document.getElementById("showQuestionAnswer");
