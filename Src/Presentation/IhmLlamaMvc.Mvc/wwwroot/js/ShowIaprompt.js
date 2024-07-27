@@ -340,8 +340,7 @@ function CreerListeHistorique() {
         let button = document.createElement('button');
         button.innerText = 'Click me!';
         entry.appendChild(button);
-
-
+        
         grabList.appendChild(entry);
     }
 }
