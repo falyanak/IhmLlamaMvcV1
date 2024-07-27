@@ -8,7 +8,7 @@ namespace IhmLlamaMvc.Application.Interfaces
     {
         public Conversation DemarrerConversation();
         public void TerminerConversation(Conversation conversation);
-        public  Task<string> GetAnswer(string question);
+        public Task<string> GetAnswer(string question, int modelId);
 
         public Task<Result<IReadOnlyList<ModeleIA>>> ListerModelesIA();
     }

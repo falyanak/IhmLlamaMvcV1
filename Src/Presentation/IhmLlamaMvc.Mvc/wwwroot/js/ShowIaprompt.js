@@ -4,15 +4,16 @@ window.onload = function () {
     // Écouteur d'événement pour le bouton de réinitialisation
     document.getElementById("resetButton").addEventListener("click", function () { resetConversation(); });
     document.getElementById("searchForm").addEventListener("submit", function (event) { postData(event); });
+    document.getElementById("ModeleId").addEventListener("change", function () { resetConversation(); });
 
     const textareas = document.querySelectorAll("textarea");
     //  var test = document.querySelectorAll('input[value][type="checkbox"]:not([value=""])
 
     const questions = document.querySelectorAll(".questionclass");
-    console.log(questions);
+    //  console.log(questions);
 
     const reponses = document.querySelectorAll(".reponseclass");
-    console.log(reponses);
+    //  console.log(reponses);
 
     document.getElementById("Question").addEventListener("keypress", function (event) {
         if (event.key === 'Enter') {
@@ -23,17 +24,12 @@ window.onload = function () {
 
     textareas.forEach(function (i) {
         i.addEventListener('input', function () {
-            console.log("on input");
+            //  console.log("on input");
             setDynamicHeight(this);
         });
     });
 
-    //textareas.forEach(function (i) {
-    //    i.addEventListener('change', function () {
-    //        console.log("on change");
-    //        setDynamicHeight(this);
-    //    });
-    //});
+
     clearSessionStorage();
     storeObjectInSessionStorage(QUESTION_VALEUR_MAX_ID, 0);
     storeObjectInSessionStorage(REPONSE_VALEUR_MAX_ID, 0);
@@ -53,6 +49,8 @@ window.onload = function () {
     // cacher l'indicateur de chargement
     hideBusyIndicator();
 
+    CreerListeHistorique();
+
     Question.focus()
 };
 
@@ -63,7 +61,7 @@ async function postData(event) {
 
     const question = document.getElementById("Question").value;
     if (question.length == 0) {
-        alert("La question doit être saisie !!");
+        alert("Une question doit être saisie !!");
         return false;
     }
 
@@ -80,7 +78,7 @@ async function postData(event) {
 
     const modeleId = document.getElementById("ModeleId").value;
     formData.append("ModeleId", modeleId);
-    console.log(formData);
+    // console.log(formData);
 
     const url = $('#mapconversation').data('url-soumettre-formulaire-link');
 
@@ -93,7 +91,7 @@ async function postData(event) {
         });
 
         const result = await response.json();
-        console.log("Success:", result);
+        // console.log("Success:", result);
 
         if (!response.ok) {
             errorResponse = result;
@@ -114,11 +112,8 @@ async function postData(event) {
         // afficher la réponse
         showResponse(result);
 
+        //    document.getElementsByClassName("left-sidebar-grid").style.gridTemplateRows = "auto";
         document.getElementById("Question").value = "";
-        document.getElementById("rechercher").disabled = false;
-
-    //    document.getElementsByClassName("left-sidebar-grid").style.gridTemplateRows = "auto";
-
 
     } catch (error) {
         console.log("Error:", error);
@@ -156,7 +151,7 @@ function resetConversation() {
 }
 
 function preventInputData(actionValue = false) {
-    console.log(`accessibilite IHM = ${actionValue}`);
+    //  console.log(`accessibilite IHM = ${actionValue}`);
 
     document.getElementById("Question").readOnly = actionValue;
     document.getElementById("rechercher").readOnly = actionValue;
@@ -164,17 +159,45 @@ function preventInputData(actionValue = false) {
 
 function setDynamicHeight(element) {
     element.style.height = 0; // set the height to 0 in case of it has to be shrinked
-    console.log(`element.scrollHeight = ${element.scrollHeight} pour élément ${element.name}`)
-    element.style.height = element.scrollHeight + 'px'; // set the dynamic height
+
+    //  console.log(`element.scrollHeight = ${element.scrollHeight} pour élément ${element.name}`)
+
+    // temporisation pour la mise à jour de la hauteur
+    setTimeout(function () {
+        element.style.height = element.scrollHeight + 'px'; // set the dynamic height
+    }, 50);
+
+
 }
 
+
+function getIconIaPath() {
+    const LLAMA_ID = "1";
+    const PHI_ID = "2";
+    const modelId = document.getElementById("ModeleId").value;
+
+    //  alert(`modelId = ${modelId}`);
+
+    switch (modelId) {
+        case LLAMA_ID:
+            return $('#mapconversation').data('icon-path-ollama');
+
+        case PHI_ID:
+            return $('#mapconversation').data('icon-path-phi');
+
+        default: return "Icone IA non trouvé !"
+    }
+}
 
 function showResponse(data) {
 
     const nextId = getReponseMaxId();
 
-    //  const dataWithPrefix = `IA : ${data}`;
-    createTextareaAnswer(nextId, data);
+    const iconIaPath = getIconIaPath();
+
+    //   alert(`iconIaPath = ${iconIaPath}`);
+
+    createTextareaAnswer(nextId, data, iconIaPath);
 
     const id = `reponseId-${nextId}`;
 
@@ -184,36 +207,32 @@ function showResponse(data) {
     answer.value = data;
 
     setDynamicHeight(answer);
-
-
 }
-
 
 function getReponseMaxId() {
     let id = restoreObjectInSessionStorage(REPONSE_VALEUR_MAX_ID);
-    console.log(`getReponseMaxId = ${id}`);
+    // console.log(`getReponseMaxId = ${id}`);
 
     id = parseInt(id, 10) + 1;
 
-    console.log(`getReponseMaxId après incrément = ${id}`);
+    //  console.log(`getReponseMaxId après incrément = ${id}`);
 
     // stocker la nouvelle valeur
     storeNewMaxId(REPONSE_VALEUR_MAX_ID, id);
 
-    console.log(`stockage en session de REPONSE_VALEUR_MAX_ID = ${id}`);
+    //  console.log(`stockage en session de REPONSE_VALEUR_MAX_ID = ${id}`);
     return id;
 }
 
 
-function createTextareaAnswer(nextId, content) {
+function createTextareaAnswer(nextId, content, iconIaPath) {
     let myDiv = document.createElement('div');
     myDiv.id = `divreponseid-${nextId}`;
     myDiv.className = 'container';
 
-
     let myImg = document.createElement('img');
-    const iconPath = $('#mapconversation').data('icon-path-ollama');
-    myImg.src = iconPath
+    //  const iconPath = $('#mapconversation').data('icon-path-ollama');
+    myImg.src = iconIaPath;
     myImg.height = "32";
     myImg.width = "32";
 
@@ -266,15 +285,15 @@ function createTextareaQuestion(nextId, content) {
 
 function getQuestionMaxId() {
     let id = restoreObjectInSessionStorage(QUESTION_VALEUR_MAX_ID);
-    console.log(`getQuestionMaxId = ${id}`);
+    //   console.log(`getQuestionMaxId = ${id}`);
 
     id = parseInt(id, 10) + 1;
-    console.log(`getQuestionMaxId après incrément = ${id}`);
+    //   console.log(`getQuestionMaxId après incrément = ${id}`);
 
     // stocker la nouvelle valeur
     storeNewMaxId(QUESTION_VALEUR_MAX_ID, id);
 
-    console.log(`stockage en session de QUESTION_VALEUR_MAX_ID = ${id}`);
+    //   console.log(`stockage en session de QUESTION_VALEUR_MAX_ID = ${id}`);
 
     return id;
 }
@@ -305,4 +324,16 @@ function showQuestion() {
 
     // recopier question dans nouveau textArea
     question.value = data;
+}
+
+function CreerListeHistorique(listElement) {
+    var text = '<ul>';
+    for (var i = 0; i < 6; i++) {
+
+        text = text + "<li class='file'><a href=''>Subfile " + i + "</a></li>";
+
+    }
+    text = text + '</ul>';
+
+    document.getElementById('listeHistorique').innerHTML = text;
 }

@@ -96,14 +96,14 @@ p.right {
 }
 
 p.left {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 div.sticky {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    background-color: whitesmoke;
+    /*background-color: whitesmoke;*/
     height: 3rem;
 }
 
@@ -113,8 +113,8 @@ div.sticky {
 
 .navbargrid {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    align-items: start;
+    grid-template-columns: repeat(6, 1fr);
+    /*align-items: start;*/
 }
 
 /* tablet breakpoint */

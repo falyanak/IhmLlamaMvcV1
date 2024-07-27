@@ -7,14 +7,14 @@ namespace IhmLlamaMvc.IaModelLlamaProvider
 {
     public class SemanticKernelService : ICallIaModel
     {
-        public async Task<string> GetAnswer(string question)
+        public async Task<string> GetAnswer(string question, string nomModele)
         {
 
             // Initialize the Semantic kernel
             var kernelBuilder = Kernel.CreateBuilder();
 #pragma warning disable SKEXP0010 // Le type est utilisé à des fins d’évaluation uniquement et est susceptible d’être modifié ou supprimé dans les futures mises à jour. Supprimez ce diagnostic pour continuer.
             var kernel = kernelBuilder.AddOpenAIChatCompletion( // We use Semantic Kernel OpenAI API
-                    modelId: "llama3",
+                    modelId: nomModele,
                     apiKey: null,
                     endpoint: new Uri("http://localhost:11434")) // With Ollama OpenAI API endpoint
                 .Build();

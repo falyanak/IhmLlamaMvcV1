@@ -14,5 +14,6 @@ namespace IhmLlamaMvc.Domain.Entites.IaModels
         public string Libelle { get; set; }
         public string UrlApi { get; set; }
         public string Version { get; set; }
+        public string NomModeleApi { get; set; }
     }
 }

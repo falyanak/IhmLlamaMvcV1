@@ -17,7 +17,7 @@ namespace IhmLlamaMvc.Application.UseCases.Conversations.Commands
         public async Task<string> Handle(CreerQuestionRequete request,
             CancellationToken cancellationToken)
         {
-            var reponse = await _chatIaService.GetAnswer(request.Question);
+            var reponse = await _chatIaService.GetAnswer(request.Question, request.ModeleId);
 
             return reponse;
         }

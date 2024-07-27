@@ -29,5 +29,18 @@ namespace IhmLlamaMvc.Persistence.Repositories
 
             return modelesIAList;
         }
+
+        public async Task<string> GetModelNameFromModelID(int modelId)
+        {
+            var modeleIa = await _dBContext.IaModels
+                .FirstOrDefaultAsync(m => m.Id == modelId);
+
+            if (modeleIa == null)
+            {
+                throw new ArgumentException("Le modèle d'IA est introuvable !!");
+            }
+
+            return modeleIa.NomModeleApi;
+        }
     }
 }
