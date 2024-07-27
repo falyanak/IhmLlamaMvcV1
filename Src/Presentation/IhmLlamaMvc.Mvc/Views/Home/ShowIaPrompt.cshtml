@@ -51,16 +51,7 @@
         </button>
 
         </div> *@
-        <div>
-            <ul id="listeHistorique">
-             @*    <li>
-                    <a href="#">Hello 26/07/2024</a>
-
-                </li>
-                <li>
-                    <a href="#">L'albatros du 25/07/2024</a>
-                </li> *@
-            </ul>
+        <div id="listeHistorique">
         </div>
 
 
@@ -71,7 +62,9 @@
      data-url-soumettre-formulaire-link="@Url.Content("~/Home/PoserQuestion")"
      data-url-initiales-user="@Url.Content(@Model.InitialesAgent)"
      data-icon-path-ollama="@Url.Content("~/images/ollama.png")"
-     data-icon-path-phi="@Url.Content("~/images/phi.png")">
+     data-icon-path-phi="@Url.Content("~/images/phi.png")"
+     data-icon-delete="@Url.Content("~/images/trash-solid.svg")"
+     data-icon-open-chat="@Url.Content("~/images/folder-open-solid.svg")">
 </div>
 <script src="~/js/ShowIaprompt.js"></script>
 

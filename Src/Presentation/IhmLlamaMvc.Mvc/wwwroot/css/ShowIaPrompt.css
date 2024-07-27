@@ -69,7 +69,6 @@ textarea {
 }
 
 /* alignement dans le header*/
-
 .headergrid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -131,9 +130,18 @@ div.sticky {
 .container {
     display: flex;
     flex-direction: row;
-    align-items:center;
-    justify-content:center;
+    align-items: center;
+    justify-content: center;
 }
+
+.containerHistorique {
+    display: grid;
+    grid-template-columns: 85% 15%;
+}
+.openChat{}
+.deleteChat{}
+
+
 
 
 select {

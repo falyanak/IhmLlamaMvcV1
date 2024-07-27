@@ -6,6 +6,17 @@ window.onload = function () {
     document.getElementById("searchForm").addEventListener("submit", function (event) { postData(event); });
     document.getElementById("ModeleId").addEventListener("change", function () { resetConversation(); });
 
+    // ajout évènement click aux boutons de l'historique
+    setTimeout(() => {
+        document.querySelectorAll(".deleteChat").forEach(i => i.addEventListener(
+            "click", () => deleteChat()));
+
+        document.querySelectorAll(".openChat").forEach(i => i.addEventListener(
+            "click", () => openChat()));
+
+
+    }, 500);
+
     const textareas = document.querySelectorAll("textarea");
     //  var test = document.querySelectorAll('input[value][type="checkbox"]:not([value=""])
 
@@ -326,32 +337,94 @@ function showQuestion() {
     question.value = data;
 }
 
+//function CreerListeHistorique() {
+//    var grabList = document.getElementById('listeHistorique');
+
+//    for (let i = 0; i < 6; i++) {
+//        text = `INFO ${i}`
+//        let entry = document.createElement('li');
+//        entry.id = `li-id-${i}`;
+//        entry.className = "itemListAvecBoutton";
+//        entry.appendChild(document.createTextNode(text));
+
+//        /*Add a button to each LI */
+//        let button2 = document.createElement('button');
+
+//        let myImg2 = document.createElement('img');
+//        const iconPath2 = $('#mapconversation').data('icon-open-chat');
+//        myImg2.src = iconPath2;
+//        myImg2.height = "16";
+//        myImg2.width = "16";
+
+//        button2.appendChild(myImg2);
+
+//        entry.appendChild(button2);
+
+//        let button1 = document.createElement('button');
+
+//        let myImg1 = document.createElement('img');
+//        const iconPath1 = $('#mapconversation').data('icon-delete');
+//        myImg1.src = iconPath1;
+//        myImg1.height = "16";
+//        myImg1.width = "16";
+
+//        button1.appendChild(myImg1);
+
+//        entry.appendChild(button1);
+
+
+//        grabList.appendChild(entry);
+//    }
+//}
 function CreerListeHistorique() {
     var grabList = document.getElementById('listeHistorique');
 
     for (let i = 0; i < 6; i++) {
-        text = `INFO ${i}`
-        let entry = document.createElement('li');
-        entry.id = `li-id-${i}`;
-        entry.className = "ItemNotChecked";
-        entry.appendChild(document.createTextNode(text));
+        const text = `L'albatros de charles Baudelaire`
+        let div0 = document.createElement('div');
+        div0.className = "containerHistorique";
+        div0.appendChild(document.createTextNode(text));
 
-        /*Add a button to each LI */
-        let button = document.createElement('button');
-        button.innerText = 'Click me!';
-        entry.appendChild(button);
-        
-        grabList.appendChild(entry);
+        let div1 = document.createElement('div');
+        let button2 = document.createElement('button');
+        button2.title = "Ouvrir le chat";
+        //    button2.className = "openChat";
+        button2.setAttribute("class", "openChat");
+
+        let myImg2 = document.createElement('img');
+        const iconPath2 = $('#mapconversation').data('icon-open-chat');
+        myImg2.src = iconPath2;
+        myImg2.height = "16";
+        myImg2.width = "16";
+
+        button2.appendChild(myImg2);
+
+        div1.appendChild(button2);
+
+
+        let button1 = document.createElement('button');
+        button1.title = "Supprimer le chat";
+        //   button1.className = "deleteChat";
+        button1.setAttribute("class", "deleteChat");
+
+        let myImg1 = document.createElement('img');
+        const iconPath1 = $('#mapconversation').data('icon-delete');
+        myImg1.src = iconPath1;
+        myImg1.height = "16";
+        myImg1.width = "16";
+
+        button1.appendChild(myImg1);
+
+        div1.appendChild(button1);
+
+        div0.appendChild(div1);
+
+        grabList.appendChild(div0);
     }
 }
-function CreerListeHistorique1() {
- //   var text = '<ul>';
-    for (var i = 0; i < 6; i++) {
-
-  //      text = text + "<li class='file'><a>Subfile " + i + "</a></li>";
-
-    }
- //   text = text + '</ul>';
-
- //   document.getElementById('listeHistorique').innerHTML = text;
+function openChat() {
+    alert("open Chat");
+}
+function deleteChat() {
+    alert("delete Chat");
 }
