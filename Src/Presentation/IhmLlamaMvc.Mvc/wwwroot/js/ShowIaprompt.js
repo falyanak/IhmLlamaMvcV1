@@ -9,12 +9,10 @@ window.onload = function () {
     // ajout évènement click aux boutons de l'historique
     setTimeout(() => {
         document.querySelectorAll(".deleteChat").forEach(i => i.addEventListener(
-            "click", () => deleteChat()));
+            "click", function () {deleteChat(this) }));
 
         document.querySelectorAll(".openChat").forEach(i => i.addEventListener(
-            "click", () => openChat()));
-
-
+            "click", function () { openChat(this) }));
     }, 500);
 
     const textareas = document.querySelectorAll("textarea");
@@ -62,6 +60,7 @@ window.onload = function () {
 
     CreerListeHistorique();
 
+
     Question.focus()
 };
 
@@ -75,8 +74,6 @@ async function postData(event) {
         alert("Une question doit être saisie !!");
         return false;
     }
-
-    document.getElementById("rechercher").disabled = true;
 
     // empêcher la saisie pendant la soumission du formulaire
     preventInputData(true);
@@ -161,11 +158,11 @@ function resetConversation() {
     document.getElementById("Question").focus();
 }
 
-function preventInputData(actionValue = false) {
+function preventInputData(etat = true) {
     //  console.log(`accessibilite IHM = ${actionValue}`);
 
-    document.getElementById("Question").readOnly = actionValue;
-    document.getElementById("rechercher").readOnly = actionValue;
+    document.getElementById("Question").readOnly = etat;
+    document.getElementById("rechercher").disabled = etat;
 }
 
 function setDynamicHeight(element) {
@@ -387,6 +384,9 @@ function CreerListeHistorique() {
 
         let div1 = document.createElement('div');
         let button2 = document.createElement('button');
+
+        button2.id = `open-chatId-${i}`;
+
         button2.title = "Ouvrir le chat";
         //    button2.className = "openChat";
         button2.setAttribute("class", "openChat");
@@ -403,6 +403,8 @@ function CreerListeHistorique() {
 
 
         let button1 = document.createElement('button');
+        button1.id = `delete-chatId-${i}`;
+
         button1.title = "Supprimer le chat";
         //   button1.className = "deleteChat";
         button1.setAttribute("class", "deleteChat");
@@ -422,9 +424,9 @@ function CreerListeHistorique() {
         grabList.appendChild(div0);
     }
 }
-function openChat() {
-    alert("open Chat");
+function openChat(bouton) {
+    console.log(`open Chat event = ${bouton.id}`);
 }
-function deleteChat() {
-    alert("delete Chat");
+function deleteChat(bouton) {
+    console.log(`delete Chat event = ${bouton.id}`);
 }
