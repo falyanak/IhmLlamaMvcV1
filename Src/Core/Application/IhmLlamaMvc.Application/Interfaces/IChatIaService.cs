@@ -11,5 +11,6 @@ namespace IhmLlamaMvc.Application.Interfaces
         public Task<string> GetAnswer(string question, int modelId);
 
         public Task<Result<IReadOnlyList<ModeleIA>>> ListerModelesIA();
+        public Task<Result<IReadOnlyList<Conversation>>> ListerConversationAgent(string loginUser);
     }
 }

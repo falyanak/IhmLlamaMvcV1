@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using IhmLlamaMvc.Application.Interfaces.Dal;
 using IhmLlamaMvc.Domain.Entites.Agents;
+using IhmLlamaMvc.Domain.Entites.Conversations;
 using IhmLlamaMvc.Domain.Entites.IaModels;
 using IhmLlamaMvc.Persistence.Constants;
 using IhmLlamaMvc.Persistence.Repositories;
@@ -33,15 +34,15 @@ public static class ServiceCollectionExtensions
         // injection du service de statistiques du cache mis en cache
         services.AddScoped<ICacheStatisticService, CacheStatisticService>();
 
-        // injection du repository Agent
-        services.AddScoped<IAgentRepository, AgentRepository>();
-
+   
         // injection du repository Agent
         services.AddScoped<IAgentRepository, AgentRepository>();
 
         // injection du repository ModeleIA
         services.AddScoped<IModelIARepository, ModelIARepository>();
 
+        // injection du repository Conversation
+        services.AddScoped<IConversationRepository, ConversationRepository>();
 
     }
 

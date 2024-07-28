@@ -13,6 +13,8 @@ namespace IhmLlamaMvc.Mvc.Controllers
             var conversationViewModel =
                await CopierInfosVersConversationViewModel(listeModelesIA.Value);
 
+           
+
             return View(conversationViewModel);
         }
 

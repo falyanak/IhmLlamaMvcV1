@@ -14,6 +14,8 @@ public class Constantes
     public const string prefixeCompteCcrf = "ccrf\\";
 
     // clé de session Http
+    public const string SessionKeyConversationsStore = "_ConversationsStore";
     public const string SessionKeyInfosUser = "_InfosUser";
+    public const string SessionKeyUserConversations = "_UserConversations";
 
 }

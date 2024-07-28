@@ -16,7 +16,6 @@ public class BaseController : Controller
     protected readonly ApplicationSettings _applicationSettings;
     protected readonly ISender _sender;
 
-
     public BaseController(
         ISiccrfAuthorizationService siccrfAuthorizationService,
         ILogger<BaseController> logger,

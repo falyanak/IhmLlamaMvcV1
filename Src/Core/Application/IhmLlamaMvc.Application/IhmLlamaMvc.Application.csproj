@@ -15,7 +15,6 @@
 
 	<ItemGroup>
 	  <Folder Include="UseCases\Agents\Queries\" />
-	  <Folder Include="UseCases\Conversations\Queries\" />
 	  <Folder Include="UseCases\IaModels\Commands\" />
 	  <Folder Include="UseCases\Questions\Commands\" />
 	  <Folder Include="UseCases\Questions\Queries\" />

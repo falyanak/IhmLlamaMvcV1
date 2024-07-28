@@ -1,10 +1,13 @@
-﻿namespace IhmLlamaMvc.Domain.Entites.Conversations
+﻿using IhmLlamaMvc.SharedKernel.Primitives.Result;
+
+namespace IhmLlamaMvc.Domain.Entites.Conversations
 {
     public interface IConversationRepository
     {
-        public void CreerConversation(Conversation  conversation);
-        public void ListerConversationAgent(string loginWindows);
-        public void SupprimerUneConversation(int conversationId);
-        public void SupprimerToutesLesConversations(int agentId);
+        void CreerConversation(Conversation conversation);
+        Task<Result<IReadOnlyList<Conversation>>> ListerConversationAgent(string loginWindows);
+
+        void SupprimerUneConversation(int conversationId);
+        void SupprimerToutesLesConversations(int agentId);
     }
 }

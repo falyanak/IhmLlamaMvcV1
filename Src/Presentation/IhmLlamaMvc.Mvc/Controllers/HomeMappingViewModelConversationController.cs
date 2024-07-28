@@ -1,4 +1,7 @@
-﻿using IhmLlamaMvc.Domain.Entites.IaModels;
+﻿using Azure.Core;
+using IhmLlamaMvc.Application.UseCases.Conversations.Queries;
+using IhmLlamaMvc.Domain.Entites.Conversations;
+using IhmLlamaMvc.Domain.Entites.IaModels;
 using IhmLlamaMvc.Domain.Entites.Questions;
 using IhmLlamaMvc.Mvc.Constants;
 using IhmLlamaMvc.Mvc.Extensions;
@@ -25,6 +28,13 @@ public partial class HomeController
             agentPermissions = await GetInfosAgent();
         }
 
+        var historiqueConversationsUser = await _sender.Send(new ListerConversationsUserQuery(agentPermissions.CompteAD));
+
+        if (!historiqueConversationsUser.Value.Any())
+        {
+            ChargerHistoriqueConversationsToStore(agentPermissions.CompteAD, historiqueConversationsUser.Value);
+        }
+
         var conversationViewModel = new ConversationViewModel();
 
         IEnumerable<SelectListItem> listeFormatee = ConstruireListeFormateeModelesIA(listeModeles);
@@ -33,12 +43,7 @@ public partial class HomeController
         conversationViewModel.InitialesAgent = $"{agentPermissions.Prenom.First()}{agentPermissions.Nom.First()}";
         conversationViewModel.listeModeles = listeFormatee;
         conversationViewModel.listeQuestions = new List<Question>();
-        conversationViewModel.HistoriqueChats = JsonConvert.SerializeObject( new List<string>()
-        {
-            "Hello il y a 1 jour",
-            "Albatros il y a 2 jours",
-            "Astronomie il y a 1 semaine"
-        });
+        conversationViewModel.HistoriqueChats = JsonConvert.SerializeObject(historiqueConversationsUser);
 
         return conversationViewModel;
     }

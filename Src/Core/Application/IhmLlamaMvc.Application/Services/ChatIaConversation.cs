@@ -18,5 +18,9 @@ namespace IhmLlamaMvc.Application.Services
             throw new NotImplementedException();
         }
 
+        public async Task<Result<IReadOnlyList<Conversation>>> ListerConversationAgent(string loginUser)
+        {
+            return await _conversationRepository.ListerConversationAgent(loginUser);
+        }
     }
 }
