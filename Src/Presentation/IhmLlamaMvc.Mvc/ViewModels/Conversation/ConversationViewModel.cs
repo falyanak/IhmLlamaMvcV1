@@ -24,4 +24,5 @@ public class ConversationViewModel
     public IEnumerable<SelectListItem> listeModeles { get; set; }
 
     public List<Question> listeQuestions { get; set; }
+    public string HistoriqueChats { get; set; }
 }

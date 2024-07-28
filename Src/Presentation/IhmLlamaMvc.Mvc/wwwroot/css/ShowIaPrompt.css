@@ -138,17 +138,19 @@ div.sticky {
     display: grid;
     grid-template-columns: 85% 15%;
 }
-.openChat{}
+.openChat {
+}
 .deleteChat{}
-
-
-
+.selectedItem {
+    background-color: lightskyblue
+}
 
 select {
     font-size: 16px;
     padding: 5px;
 }
 
-#sidebar > ul > li {
+/*#sidebar > ul > li {
     font-size: 14px;
 }
+*/

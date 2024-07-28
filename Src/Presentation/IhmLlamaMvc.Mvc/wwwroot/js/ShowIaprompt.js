@@ -9,11 +9,23 @@ window.onload = function () {
     // ajout évènement click aux boutons de l'historique
     setTimeout(() => {
         document.querySelectorAll(".deleteChat").forEach(i => i.addEventListener(
-            "click", function () {deleteChat(this) }));
+            "click", function () { deleteChat(this) }));
 
         document.querySelectorAll(".openChat").forEach(i => i.addEventListener(
             "click", function () { openChat(this) }));
+
+        document.querySelectorAll(".containerHistorique").forEach(i => i.addEventListener(
+            "click", function () { gererClickHistorique(this) }));
+
+        //document.querySelectorAll(".containerHistorique").forEach(i => i.addEventListener(
+        //    "mouseover", function () {
+
+        //        document.querySelector(".containerHistorique").style.background.color='yellow';
+        //    }));
     }, 500);
+
+
+
 
     const textareas = document.querySelectorAll("textarea");
     //  var test = document.querySelectorAll('input[value][type="checkbox"]:not([value=""])
@@ -122,6 +134,10 @@ async function postData(event) {
 
         //    document.getElementsByClassName("left-sidebar-grid").style.gridTemplateRows = "auto";
         document.getElementById("Question").value = "";
+        document.getElementById("rechercher").disabled = false;
+
+        //    document.getElementsByClassName("left-sidebar-grid").style.gridTemplateRows = "auto";
+
 
     } catch (error) {
         console.log("Error:", error);
@@ -334,53 +350,22 @@ function showQuestion() {
     question.value = data;
 }
 
-//function CreerListeHistorique() {
-//    var grabList = document.getElementById('listeHistorique');
-
-//    for (let i = 0; i < 6; i++) {
-//        text = `INFO ${i}`
-//        let entry = document.createElement('li');
-//        entry.id = `li-id-${i}`;
-//        entry.className = "itemListAvecBoutton";
-//        entry.appendChild(document.createTextNode(text));
-
-//        /*Add a button to each LI */
-//        let button2 = document.createElement('button');
-
-//        let myImg2 = document.createElement('img');
-//        const iconPath2 = $('#mapconversation').data('icon-open-chat');
-//        myImg2.src = iconPath2;
-//        myImg2.height = "16";
-//        myImg2.width = "16";
-
-//        button2.appendChild(myImg2);
-
-//        entry.appendChild(button2);
-
-//        let button1 = document.createElement('button');
-
-//        let myImg1 = document.createElement('img');
-//        const iconPath1 = $('#mapconversation').data('icon-delete');
-//        myImg1.src = iconPath1;
-//        myImg1.height = "16";
-//        myImg1.width = "16";
-
-//        button1.appendChild(myImg1);
-
-//        entry.appendChild(button1);
-
-
-//        grabList.appendChild(entry);
-//    }
-//}
 function CreerListeHistorique() {
-    var grabList = document.getElementById('listeHistorique');
+    const historiqueChats = $('#mapconversation').data('historique-chats');
 
-    for (let i = 0; i < 6; i++) {
-        const text = `L'albatros de charles Baudelaire`
+    console.log(historiqueChats);
+
+    const grabList = document.getElementById('listeHistorique');
+
+    for (let i = 0; i < historiqueChats.length; i++) {
+        let divGlobale = document.createElement('div');
+        divGlobale.className = "containerHistorique";
+
+        const text = historiqueChats[i];
         let div0 = document.createElement('div');
-        div0.className = "containerHistorique";
-        div0.appendChild(document.createTextNode(text));
+        div0.className = "hasText";
+        //      div0.appendChild(document.createTextNode(text));
+        div0.innerText = text;
 
         let div1 = document.createElement('div');
         let button2 = document.createElement('button');
@@ -419,14 +404,41 @@ function CreerListeHistorique() {
 
         div1.appendChild(button1);
 
-        div0.appendChild(div1);
+        divGlobale.appendChild(div0);
+        divGlobale.appendChild(div1);
 
-        grabList.appendChild(div0);
+
+        grabList.appendChild(divGlobale);
     }
 }
+
+
+
+
 function openChat(bouton) {
     console.log(`open Chat event = ${bouton.id}`);
 }
 function deleteChat(bouton) {
     console.log(`delete Chat event = ${bouton.id}`);
+}
+
+function gererClickHistorique(divElement) {
+    console.log(`click = ${divElement.innerText}`);
+    // supprimer le style de l'item précédemment sélectionné
+    // 2 classes css .selectedItem et .hasText
+    document.querySelectorAll(".selectedItem.hasText").forEach(elt => {
+        //console.log("suppression classe selectedItem SI .selectedItem et .hasText");
+        //console.log(elt);
+        elt.classList.remove("selectedItem")
+    });
+
+    // div enfant ayant la classe .hasText
+    divElement.querySelectorAll(":scope > .hasText").forEach(elt => {
+        //console.log("ajout classe selectedItem");
+        //console.log(divElement);
+        //console.log(elt);
+        elt.classList.add("selectedItem");
+    });
+
+
 }
