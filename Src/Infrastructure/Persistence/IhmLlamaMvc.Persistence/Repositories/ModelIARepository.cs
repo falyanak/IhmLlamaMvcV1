@@ -19,7 +19,7 @@ namespace IhmLlamaMvc.Persistence.Repositories
             var modelesIAList = new List<ModeleIA>();
             try
             {
-                modelesIAList = await _dBContext.IaModels.ToListAsync();
+                modelesIAList = await _dBContext.IaModels.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
             {

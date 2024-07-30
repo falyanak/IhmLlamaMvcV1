@@ -23,7 +23,7 @@ public class ConversationViewModel
     public AgentPermissions AgentPermissions { get; set; }
     public IEnumerable<SelectListItem> listeModeles { get; set; }
 
-    public string listeQuestions { get; set; }
+  //  public string listeQuestions { get; set; }
     public string HistoriqueChats { get; set; }
     public int ConversationId { get; set; }
     public Guid IdentifiantSession { get; set; }

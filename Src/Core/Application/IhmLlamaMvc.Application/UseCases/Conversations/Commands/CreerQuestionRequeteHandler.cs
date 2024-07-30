@@ -17,16 +17,17 @@ namespace IhmLlamaMvc.Application.UseCases.Conversations.Commands
         }
 
         /// <inheritdoc />
-        public async Task<Conversation?> Handle(CreerQuestionRequete request,
-            CancellationToken cancellationToken)
+        public async Task<Conversation?> Handle(CreerQuestionRequete request, CancellationToken cancellationToken)
         {
             Conversation? conversation = null;
-            if (request.ConsersationId > 0)
+            if (request.sauvegarderEnBase || request.ConversationId > 0)
             {
-                 conversation = await _chatIaService
-                    .GetAnswerPourConversationEnBase(
-                        request.Agent, request.ConsersationId, request.Question,
-                        request.ModeleId);
+                 conversation = await _chatIaService.GetAnswerPourConversationEnBase(
+                    request.Conversation, request.Question);
+
+                 var result = await _chatIaService.SauvegarderConversationEnBase(conversation);
+               
+                 conversation = result.Value;
             }
             else
             {

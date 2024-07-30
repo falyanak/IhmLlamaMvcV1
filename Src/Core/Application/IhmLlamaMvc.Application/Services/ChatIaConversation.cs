@@ -8,7 +8,7 @@ namespace IhmLlamaMvc.Application.Services
 {
     public partial class ChatIaService
     {
-      public async  Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation? conversation)
+        public async Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation conversation)
         {
             var agentExisteEnBase =
                 await _agentRepository.RechercherUnAgent(conversation.Agent.LoginWindows);
@@ -16,6 +16,9 @@ namespace IhmLlamaMvc.Application.Services
             // l'agent n'est pas connu en base, créer une conversation et lui ajouter la question
             if (agentExisteEnBase.Value is null)
             {
+                // supprimer la navigation vers ModeleIA et utiliser uniquement une clé étrangère
+                conversation.ModeleIAId = conversation.ModeleIA.Id;
+                conversation.ModeleIA = null;
                 var result = await _conversationRepository.SauvegarderConversationEnBase(conversation);
 
                 return result;
@@ -38,14 +41,18 @@ namespace IhmLlamaMvc.Application.Services
 
             if (conversation.Id > 0)
             {
-                conversation = agentExisteEnBase.Value.Conversations
-                    .FirstOrDefault(c => c.Id == conversation.Id);
-                if (conversation == null)
-                {
-                    throw new ApplicationException("conversationId > 0 et conversation non trouvée en base");
-                }
+                //conversation = agentExisteEnBase.Value.Conversations
+                //    .FirstOrDefault(c => c.Id == conversation.Id);
 
-                var derniereQuestion = conversation.Agent.ConversationCourante.Questions.LastOrDefault();
+              
+                //if (conversation == null)
+                //{
+                //    throw new ApplicationException("conversationId > 0 et conversation non trouvée en base");
+                //}
+
+                // var derniereQuestion = conversation.Agent.ConversationCourante.Questions.LastOrDefault();
+                var derniereQuestion = conversation.Questions.LastOrDefault();
+
 
                 var result = await _conversationRepository.SauvegarderQuestionEnBase(derniereQuestion);
             }
@@ -54,10 +61,12 @@ namespace IhmLlamaMvc.Application.Services
         }
 
         public async Task<Conversation?> GetAnswerPourConversationEnBase(
-            Agent agentConnecte, int conversationId, string question, int modelId)
+            Conversation conversation, string question)
         {
             var ListemodeleIa = await _modelIaRepository.ChargerModelesIA();
-            var modeleIa = ListemodeleIa.Value.FirstOrDefault(m => m.Id == modelId);
+
+            var modeleIa = ListemodeleIa.Value
+                .FirstOrDefault(m => m.Id == conversation.ModeleIAId);
             if (modeleIa is null)
             {
                 throw new ApplicationException("Le modèle d'IA n'a pas été trouvé !");
@@ -68,8 +77,9 @@ namespace IhmLlamaMvc.Application.Services
             var reponse = await _callIaModel.GetAnswer(question, modelNameApi);
             var reponseDonnee = new Reponse(reponse);
 
-            Conversation? conversation = null;
-            var agentExisteEnBase = await _agentRepository.RechercherUnAgent(agentConnecte.LoginWindows);
+            //  Conversation? conversation = null;
+            var agentExisteEnBase = await _agentRepository
+                .RechercherUnAgent(conversation.Agent.LoginWindows);
 
             // l'agent n'est pas connu en base, créer une conversation et lui ajouter la question
             if (agentExisteEnBase.Value is null)
@@ -77,7 +87,7 @@ namespace IhmLlamaMvc.Application.Services
                 //conversation = await CreerConversationPourAgentInconnu(agentConnecte,
                 //    question, reponseDonnee, modeleIa);
 
-                conversation = new Conversation(modeleIa, agentConnecte, question);
+                conversation = new Conversation(modeleIa, conversation.Agent, question);
                 var questionAvecReponse = new Question(question, reponseDonnee, conversation);
 
                 conversation.Questions.Add(questionAvecReponse);
@@ -91,7 +101,7 @@ namespace IhmLlamaMvc.Application.Services
             // créer une conversation et lui ajouter la question
             if (!agentExisteEnBase.Value.Conversations.Any())
             {
-                conversation = new Conversation(modeleIa, agentConnecte, question);
+                conversation = new Conversation(modeleIa, conversation.Agent, question);
                 var questionAvecReponse = new Question(question, reponseDonnee, conversation);
 
                 conversation.Questions.Add(questionAvecReponse);
@@ -103,9 +113,9 @@ namespace IhmLlamaMvc.Application.Services
 
             // l'agent existe en base a  1 historique de chat mais la question n'appartient à aucun historique
             // créer une conversation et lui ajouter la question
-            if (conversationId == 0)
+            if (conversation.Id == 0)
             {
-                conversation = new Conversation(modeleIa, agentConnecte, question);
+                conversation = new Conversation(modeleIa, conversation.Agent, question);
                 var questionAvecReponse = new Question(question, reponseDonnee, conversation);
 
                 conversation.Questions.Add(questionAvecReponse);
@@ -118,9 +128,10 @@ namespace IhmLlamaMvc.Application.Services
             // l'agent existe en base a  1 historique de chat et la question appartient à un historique
             // lui ajouter la question
 
-            if (conversationId > 0)
+            if (conversation.Id > 0)
             {
-                conversation = agentExisteEnBase.Value.Conversations.FirstOrDefault(c => c.Id == conversationId);
+                conversation = agentExisteEnBase.Value.Conversations
+                    .FirstOrDefault(c => c.Id == conversation.Id);
                 if (conversation == null)
                 {
                     throw new ApplicationException("conversationId > 0 et conversation non trouvée en base");
@@ -139,7 +150,7 @@ namespace IhmLlamaMvc.Application.Services
         }
 
         public async Task<Conversation?> GetAnswerPourConversationEnSession(
-            Agent agentConnecte, Conversation? conversation, string question, 
+            Agent agentConnecte, Conversation? conversation, string question,
             int modelId, Guid identifiantSession)
         {
             var ListemodeleIa = await _modelIaRepository.ChargerModelesIA();
@@ -175,7 +186,7 @@ namespace IhmLlamaMvc.Application.Services
 
             if (conversation.IdentifiantSession != Guid.Empty)
             {
-               
+
                 if (conversation.IdentifiantSession != identifiantSession)
                 {
                     throw new ApplicationException("conversationId > 0 et conversation non trouvée en session");

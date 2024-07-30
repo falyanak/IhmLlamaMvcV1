@@ -1,8 +1,12 @@
 using IhmLlamaMvc.Domain.Entites.Conversations;
+using IhmLlamaMvc.Domain.Entites.Questions;
 using IhmLlamaMvc.Mvc.Constants;
 using IhmLlamaMvc.Mvc.Extensions;
+using IhmLlamaMvc.Mvc.ViewModels.Conversation;
+using Newtonsoft.Json;
 using ReferentielAPI.Entites;
 using System.Collections.Concurrent;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Agent = IhmLlamaMvc.Domain.Entites.Agents.Agent;
 
 namespace IhmLlamaMvc.Mvc.Controllers
@@ -133,6 +137,30 @@ namespace IhmLlamaMvc.Mvc.Controllers
             return conversationCourante;
         }
 
+        private Conversation? GetConversationCourante(int conversationId)
+        {
+  
+            var store = GetConversationStore();
+
+            var agent = HttpContext.Session.GetJson<AgentPermissions>(Constantes.SessionKeyInfosAgent);
+
+            if (!store.ContainsKey(agent.CompteAD))
+            {
+                throw new ApplicationException("La conversation n'a pas été trouvée !");
+            }
+
+            var conversationCourante = store[agent.CompteAD]
+                .FirstOrDefault(c => c.Id == conversationId);
+
+            if (conversationCourante == null)
+            {
+                throw new ApplicationException("La conversation n'a pas été trouvée !");
+            }
+
+            return conversationCourante;
+        }
+
+
         private async Task<bool> EffacerConversationEnSession(Guid identifiantSession)
         {
             // le login Windows de l'agent n'est pas connu du dictionnaire, ajouter clé/valeur = login/conversation
@@ -153,10 +181,51 @@ namespace IhmLlamaMvc.Mvc.Controllers
             var result=conversations.TryTake(out conversationCourante);
 
             SaveStoreToHtppSession(store);
-
             return result;
+        }
+
+        public async Task<List<QuestionReponse>> ChargerConversation( int ConversationId)
+        {
+            var store = GetConversationStore();
+
+            Agent agent = await GetAgent();
+
+            if (!store.ContainsKey(agent.LoginWindows))
+            {
+                throw new ApplicationException("L'agent n'a pas été trouvé dans la session serveur !");
+            }
+
+            var listeQuestionsReponsesInconversationStore = store[agent.LoginWindows]
+                .FirstOrDefault(c => c.Id == ConversationId);
+
+            if (listeQuestionsReponsesInconversationStore == null)
+            {
+                throw new ApplicationException("La conversation n'a pas été trouvée dans la session serveur !");
+            }
+            var listeQuestions = 
+                listeQuestionsReponsesInconversationStore.Questions
+                .Select(qr => new QuestionReponse
+                {
+                    QuestionId = qr.Id,
+                    Question = qr.Libelle,
+                    ReponseId = qr.Reponse.Id,
+                    Reponse = qr.Reponse.Libelle
+                }).ToList();
+         //   var listeQuestionsEnChaine = JsonConvert.SerializeObject(listeQuestions);
+
+           // return listeQuestionsEnChaine;
+           return listeQuestions;
 
         }
+    }
+
+    public class QuestionReponse
+    {
+        public int QuestionId { get; set; }
+        public string Question { get; set; }
+        public int ReponseId { get; set; }
+        public string Reponse { get; set; }
+
     }
 }
 

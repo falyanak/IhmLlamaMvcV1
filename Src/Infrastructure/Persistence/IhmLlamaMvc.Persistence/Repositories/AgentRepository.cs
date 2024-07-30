@@ -39,7 +39,7 @@ public  class AgentRepository : IAgentRepository
 
     public async Task<Result<Agent?>> RechercherUnAgent(string loginWindows)
     {
-          var agent=  await _dBContext.Agents
+          var agent=  await _dBContext.Agents.AsNoTracking()
               .Include(a=>a.Conversations)
               .ThenInclude(c=>c.Questions)
               .FirstOrDefaultAsync(a=>a.LoginWindows==loginWindows);
