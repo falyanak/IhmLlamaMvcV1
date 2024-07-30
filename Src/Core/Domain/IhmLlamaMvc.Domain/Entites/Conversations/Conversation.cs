@@ -42,6 +42,9 @@ namespace IhmLlamaMvc.Domain.Entites.Conversations
         public ModeleIA ModeleIA { get; set; }
         public Agent Agent { get; set; }
 
+        // FK 
+        public int ModeleIAId { get; set; }
+
         public List<Question> Questions { get; set; }= new List<Question>();
 
         [NotMapped]

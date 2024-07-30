@@ -5,7 +5,7 @@ namespace IhmLlamaMvc.Domain.Entites.Conversations
 {
     public interface IConversationRepository
     {
-        Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation? conversation);
+        Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation conversation);
 
         Task<Result<Question>> SauvegarderQuestionEnBase(Question derniereQuestion);
 

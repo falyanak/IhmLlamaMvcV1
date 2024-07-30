@@ -127,7 +127,7 @@ async function postData(event) {
         //    alert(result);
 
         document.getElementById("IdentifiantSession").value = result.identifiantSession;
-     //   alert(`IdentifiantSession = ${document.getElementById("IdentifiantSession").value}`);
+        //   alert(`IdentifiantSession = ${document.getElementById("IdentifiantSession").value}`);
 
         // rendre l'IHM disponible pour la saisie
         preventInputData(false);
@@ -169,7 +169,20 @@ function errorFunc() {
     alert('error');
 }
 
-async function resetConversation() {
+async function resetConversation(showListeQuestionsReponses = false) {
+    console.log(showListeQuestionsReponses);
+
+    const identifiantSession = document.getElementById("IdentifiantSession").value
+    console.log(identifiantSession);
+    const pasDeChatEnCours = identifiantSession === "00000000-0000-0000-0000-000000000000";
+
+    //if (showListeQuestionsReponses === false) {
+    if (pasDeChatEnCours) {
+        alert("Au moins une question doit être saisie !!");
+        return false;
+    }
+    // }
+
     // Vide la zone de texte
     document.getElementById("Question").value = "";
     document.getElementById("Question").style.height = "41px";
@@ -180,16 +193,19 @@ async function resetConversation() {
         parent.firstChild.remove()
     }
 
-  
-
     // effacer la conversation en session serveur
-    const identifiantSession = document.getElementById("IdentifiantSession").value
+    //  const identifiantSession = document.getElementById("IdentifiantSession").value
+    //if (!pasDeChatEnCours) {
     const result = await SupprimerConversationEnSession(identifiantSession);
+    //  alert(`Retour appelant après suppression conversation = ${result.reponse}`);
+    // }
 
-  //  alert(`Retour appelant après suppression conversation = ${result.reponse}`);
     // effacer les champs cachés
 
-    document.getElementById("ConversationId").value = 0;
+    if (showListeQuestionsReponses === false) {
+        document.getElementById("ConversationId").value = 0;
+    }
+
     document.getElementById("IdentifiantSession").value = 0;
 
     document.getElementById("Question").focus();
@@ -220,8 +236,8 @@ async function SupprimerConversationEnSession(sessionIdentifiant) {
         });
 
         result = await response.json();
-      
- //       console.log("result:", result);
+
+        //       console.log("result:", result);
 
         if (!response.ok) {
             errorResponse = result;
@@ -253,6 +269,13 @@ async function SupprimerConversationEnSession(sessionIdentifiant) {
 }
 
 async function SauvegarderConversation() {
+    const identifiantSession = document.getElementById("IdentifiantSession").value
+    console.log(identifiantSession);
+    if (identifiantSession == "00000000-0000-0000-0000-000000000000") {
+        alert("Au moins une question doit être saisie !!");
+        return false;
+    }
+
     // empêcher la saisie pendant la soumission du formulaire
     preventInputData(true);
 
@@ -260,14 +283,21 @@ async function SauvegarderConversation() {
     showBusyIndicator();
 
     const url = $('#mapconversation').data('url-sauvegarder-conversation-link');
-    const identifiantSession = document.getElementById("IdentifiantSession").value;
-    const data = new { IdentifantSession: identifiantSession };
+
+    const data = {
+        "IdentifiantSession": identifiantSession
+    };
+
     var errorResponse;
 
     try {
         const response = await fetch(url, {
             method: "POST",
-            body: data
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(data)
+
         });
 
         const result = await response.json();
@@ -302,6 +332,9 @@ async function SauvegarderConversation() {
             showAlert("Une erreur est survenue", "message", "danger", errorList,
                 { autoClose: false })
         }
+        showBusyIndicator();
+        // rendre l'IHM disponible pour la saisie
+        preventInputData(false);
     }
 }
 
@@ -310,6 +343,10 @@ function preventInputData(etat = true) {
 
     document.getElementById("Question").readOnly = etat;
     document.getElementById("rechercher").disabled = etat;
+    document.getElementById("ModeleId").disabled = etat;
+    document.getElementById("resetButton").disabled = etat;
+    document.getElementById("saveButton").disabled = etat;
+
 }
 
 function setDynamicHeight(element) {
@@ -320,7 +357,7 @@ function setDynamicHeight(element) {
     // temporisation pour la mise à jour de la hauteur
     setTimeout(function () {
         element.style.height = element.scrollHeight + 'px'; // set the dynamic height
-    }, 50);
+    }, 100);
 
 
 }
@@ -379,7 +416,6 @@ function getReponseMaxId() {
     return id;
 }
 
-
 function createTextareaAnswer(nextId, content, iconIaPath) {
     let myDiv = document.createElement('div');
     myDiv.id = `divreponseid-${nextId}`;
@@ -408,8 +444,9 @@ function createTextareaAnswer(nextId, content, iconIaPath) {
     parent.appendChild(myDiv);
 }
 
-
 function createTextareaQuestion(nextId, content) {
+    console.log(`createTextareaQuestion -> ${nextId} ${content}`)
+
     const initialesUser = $('#mapconversation').data('url-initiales-user');
 
     let myDiv = document.createElement('div');
@@ -488,11 +525,11 @@ function CreerListeHistorique() {
 
     const grabList = document.getElementById('listeHistorique');
 
-    for (let i = 0; i < historiqueChats.length; i++) {
+    for (const element of historiqueChats) {
         let divGlobale = document.createElement('div');
         divGlobale.className = "containerHistorique";
 
-        const text = historiqueChats[i];
+        const text = element.Intitule;
         let div0 = document.createElement('div');
         div0.className = "hasText";
         //      div0.appendChild(document.createTextNode(text));
@@ -501,7 +538,7 @@ function CreerListeHistorique() {
         let div1 = document.createElement('div');
         let button2 = document.createElement('button');
 
-        button2.id = `open-chatId-${i}`;
+        button2.id = `open-chatId-${element.ConversationId}`;
 
         button2.title = "Ouvrir le chat";
         //    button2.className = "openChat";
@@ -519,7 +556,7 @@ function CreerListeHistorique() {
 
 
         let button1 = document.createElement('button');
-        button1.id = `delete-chatId-${i}`;
+        button1.id = `delete-chatId-${element.ConversationId}`;
 
         button1.title = "Supprimer le chat";
         //   button1.className = "deleteChat";
@@ -543,11 +580,18 @@ function CreerListeHistorique() {
     }
 }
 
-
-
-
 function openChat(bouton) {
     console.log(`open Chat event = ${bouton.id}`);
+
+    const prefixLength = "open-chatId-".length;
+    const conversationId = bouton.id.substring(prefixLength);
+
+    console.log(`openChat -> conversationId = ${conversationId}`)
+
+    // définir la valeur du champ caché ConversationId
+    //  document.getElementById('ConversationId').value = conversationId;
+
+    ChargerConversationEnSession(conversationId);
 }
 function deleteChat(bouton) {
     console.log(`delete Chat event = ${bouton.id}`);
@@ -571,5 +615,93 @@ function gererClickHistorique(divElement) {
         elt.classList.add("selectedItem");
     });
 
+}
 
+async function listerQuestionsReponses(listeQuestionsReponses) {
+    await resetConversation(true);
+
+    const initiales = document.getElementById("InitialesAgent").value;
+
+    const iconIaPath = getIconIaPath();
+
+    console.log("longueur = " + listeQuestionsReponses.length);
+
+    for (const element of listeQuestionsReponses) {
+
+        console.log(`listerQuestionsReponses -> element = ${element}`);
+
+        const dataWithPrefix = `${initiales} : ${element.question}`;
+
+        createTextareaQuestion(element.questionId, dataWithPrefix);
+
+        createTextareaAnswer(element.reponseId, element.reponse, iconIaPath);
+
+    }
+}
+
+async function ChargerConversationEnSession(conversationId) {
+
+    // empêcher la saisie pendant la soumission du formulaire
+    preventInputData(true);
+
+    // afficher le sablier
+    showBusyIndicator();
+
+    //  const conversationId = document.getElementById('ConversationId').value
+
+    const url = $('#mapconversation').data('url-charger-conversation-link');
+
+    const data = { "ConversationId": conversationId };
+
+    var errorResponse;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(data)
+
+        });
+
+        const result = await response.json();
+        console.log("Success:", result.reponse);
+
+        if (!response.ok) {
+            errorResponse = result;
+            throw new Error("Une erreur s'est produite !");
+        }
+
+        // définir le champ caché conversationId
+        document.getElementById("ConversationId").value = conversationId;
+
+        //     alert(result);
+        listerQuestionsReponses(result.reponse);
+
+        // rendre l'IHM disponible pour la saisie
+        preventInputData(false);
+
+        // cacher l'indicateur de chargement
+        hideBusyIndicator();
+
+
+    } catch (error) {
+        console.log("Error:", error);
+
+        //extraire les erreurs au format object{ code: string, message : string }
+        if (errorResponse && errorResponse.errors) {
+            const errorList = errorResponse.errors;
+            showAlert("Une erreur est survenue", "message", "danger", errorList,
+                { autoClose: false })
+        }
+        else {
+            const errorList = [{ code: "Une erreur s'est produite", message: error }];
+            showAlert("Une erreur est survenue", "message", "danger", errorList,
+                { autoClose: false })
+        }
+        showBusyIndicator();
+        // rendre l'IHM disponible pour la saisie
+        preventInputData(false);
+    }
 }

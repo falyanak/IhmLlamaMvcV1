@@ -16,9 +16,9 @@ namespace IhmLlamaMvc.Persistence.Repositories
             _dBContext = dBContext;
         }
 
-        public async Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation? conversation)
+        public async Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation conversation)
         {
-            EntityEntry<Conversation?> entry = null;
+            EntityEntry<Conversation> entry = null;
             try
             {
                 entry = await _dBContext.Conversations.AddAsync(conversation);
@@ -41,7 +41,9 @@ namespace IhmLlamaMvc.Persistence.Repositories
 
         public async Task<Result<IReadOnlyList<Conversation>>> ListerConversationAgent(string loginWindows)
         {
-            var conversations = await _dBContext.Conversations
+            var conversations = 
+                await _dBContext.Conversations
+               // .Include(a=>a.Agent)
                 .Include(i => i.Questions)
                 .ThenInclude(q => q.Reponse)
                .Where(c => c.Agent.LoginWindows == loginWindows)

@@ -65,13 +65,16 @@
      data-url-soumettre-formulaire-link="@Url.Content("~/Home/PoserQuestion")"
      data-url-supprimer-conversation-link="@Url.Content("~/Home/SupprimerConversationEnSession")"
      data-url-sauvegarder-conversation-link="@Url.Content("~/Home/SauvegarderConversation")"
+     data-url-charger-conversation-link="@Url.Content("~/Home/ChargerConversationEnSession")"
 
-     data-url-initiales-user="@Url.Content(@Model.InitialesAgent)"
      data-icon-path-ollama="@Url.Content("~/images/ollama.png")"
      data-icon-path-phi="@Url.Content("~/images/phi.png")"
      data-icon-delete="@Url.Content("~/images/trash-solid.svg")"
      data-icon-open-chat="@Url.Content("~/images/folder-open-solid.svg")"
-     data-historique-chats="@Model.HistoriqueChats">
+     data-url-initiales-user="@Url.Content(@Model.InitialesAgent)"
+     data-historique-chats="@Model.HistoriqueChats"
+     @* data-liste-questions="@Model.listeQuestions" *@
+     >
 </div>
 <script src="~/js/ShowIaprompt.js"></script>
 

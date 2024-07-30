@@ -2,19 +2,21 @@
 using IhmLlamaMvc.Domain.Entites.Conversations;
 using IhmLlamaMvc.Domain.Entites.IaModels;
 using IhmLlamaMvc.SharedKernel.Primitives.Result;
+using MediatR;
 
 namespace IhmLlamaMvc.Application.Interfaces
 {
     public interface IChatIaService
     {
 
-        public Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation? conversation);
+        public Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation conversation);
 
-        public Task<Conversation?> GetAnswerPourConversationEnSession(Agent agentConnecte, Conversation? conversation,
+        public Task<Conversation?> GetAnswerPourConversationEnSession(
+            Agent agentConnecte, Conversation? conversation,
             string question, int modelId, Guid identifiantSession);
 
         public Task<Conversation?> GetAnswerPourConversationEnBase(
-            Agent agentConnecte, int conversationId, string question, int modelId);
+            Conversation  conversation, string question);
 
 
         public Task<Result<IReadOnlyList<ModeleIA>>> ListerModelesIA();

@@ -11,7 +11,7 @@ namespace IhmLlamaMvc.Persistence.EF
     public class ChatIaDbContext : DbContext
     {
         public DbSet<Agent> Agents { get; set; }
-        public DbSet<Conversation?> Conversations { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Reponse> Reponses { get; set; }
         public DbSet<ModeleIA> IaModels { get; set; }

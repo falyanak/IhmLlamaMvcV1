@@ -35,15 +35,21 @@ public partial class HomeController
         conversationViewModel.listeModeles = listeFormatee;
 
         var listeLibelleChats = historiqueConversationsUser.Value
-            .Select(h => h.Intitule);
+            .Select(h => new {ConversationId=h.Id ,Intitule = h.Intitule });
         conversationViewModel.HistoriqueChats = JsonConvert.SerializeObject(listeLibelleChats.ToList());
 
 
-        var listeQuestions = historiqueConversationsUser.Value
-            .SelectMany(c => c.Questions.Select(q => q.Reponse))
-            .Select(qr => new { Question = qr.QuestionPosee.Libelle, Reponse = qr.Libelle });
+        //var listeQuestions = historiqueConversationsUser.Value
+        //    .SelectMany(c => c.Questions.Select(q => q.Reponse))
+        //    .Select(qr => new
+        //    {
+        //        QuestionId= qr.QuestionPosee.Id,
+        //        Question = qr.QuestionPosee.Libelle,
+        //        ReponseId=qr.Id,
+        //        Reponse = qr.Libelle
+        //    });
 
-        conversationViewModel.listeQuestions = JsonConvert.SerializeObject(listeQuestions);
+        //conversationViewModel.listeQuestions = JsonConvert.SerializeObject(listeQuestions);
 
         return conversationViewModel;
     }
