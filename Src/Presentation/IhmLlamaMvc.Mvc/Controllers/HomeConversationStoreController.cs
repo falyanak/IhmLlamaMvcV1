@@ -1,8 +1,9 @@
 using IhmLlamaMvc.Domain.Entites.Conversations;
-using IhmLlamaMvc.Domain.Entites.Questions;
 using IhmLlamaMvc.Mvc.Constants;
 using IhmLlamaMvc.Mvc.Extensions;
+using ReferentielAPI.Entites;
 using System.Collections.Concurrent;
+using Agent = IhmLlamaMvc.Domain.Entites.Agents.Agent;
 
 namespace IhmLlamaMvc.Mvc.Controllers
 {
@@ -12,33 +13,14 @@ namespace IhmLlamaMvc.Mvc.Controllers
         // https://learn.microsoft.com/en-us/aspnet/core/fundamentals/best-practices?view=aspnetcore-8.0
 
         // key=loginWindows Value=liste concurrente non ordonnée
-        private ConcurrentDictionary<string, ConcurrentBag<Conversation>> conversationsStore;
+        //   private ConcurrentDictionary<string, ConcurrentBag<Conversation>> conversationsStore;
 
-        private ConcurrentDictionary<string, ConcurrentBag<Conversation>> GetStore()
-        {
-            if (HttpContext.Session.GetJson<ConcurrentDictionary<string, ConcurrentBag<Conversation>>>(
-                    Constants.Constantes.SessionKeyConversationsStore) == null)
-            {
-                return new ConcurrentDictionary<string, ConcurrentBag<Conversation>>();
-            }
-
-            var store = HttpContext.Session
-                .GetJson<ConcurrentDictionary<string, ConcurrentBag<Conversation>>>(
-                    Constantes.SessionKeyConversationsStore);
-
-            if (store == null)
-            {
-                throw new ApplicationException("Le store n'a pas été trouvé !");
-            }
-
-            return store;
-        }
 
 
         private void ChargerHistoriqueConversationsToStore(string loginWindows,
             IReadOnlyList<Conversation> historiqueConversations)
         {
-            var store = GetStore();
+            var store = GetConversationStore();
 
             var conversations = new ConcurrentBag<Conversation>();
 
@@ -49,70 +31,132 @@ namespace IhmLlamaMvc.Mvc.Controllers
 
             store.TryAdd(loginWindows, conversations);
 
-            HttpContext.Session.SetJson<ConcurrentDictionary<string, ConcurrentBag<Conversation>>>(
-                Constantes.SessionKeyConversationsStore, store);
+            SaveStoreToHtppSession(store);
         }
 
-        // la question contient la question
-        private void AddQuestionToConversation(string loginWindows, Question question)
+        private void MettreAJourStore(Conversation conversation)
         {
-            var store = GetStore();
+            // le login Windows de l'agent n'est pas connu du dictionnaire, ajouter clé/valeur = login/conversation
+            
+            var store = GetConversationStore();
 
-            // l'agent n'est pas connu, créer une conversion et ajouter la question
-            if (!store.ContainsKey(loginWindows))
+            Agent agent = conversation.Agent;
+
+            if (!store.ContainsKey(agent.LoginWindows))
             {
-                AjouterQuestionPourAgentInconnu(loginWindows, question, store);
+                var conversations = new ConcurrentBag<Conversation>();
+                conversations.Add(conversation);
+                var succes = store.TryAdd(agent.LoginWindows, conversations);
+
+                SaveStoreToHtppSession(store);
                 return;
             }
 
-            // le store contient le login mais pas la conversation, la créer
-            var conversationUser = store[loginWindows]
-                .FirstOrDefault(c => c.Id == question.Conversation.Id);
-
-            if (conversationUser == null)
+            // le login Windows de l'agent est connu du dictionnaire
+            // mais la conversation n'a pas été trouvée
+            // ajouter la conversation
+            if (store[agent.LoginWindows].IsEmpty)
             {
-                AjouterQuestionSiConversationNonTrouvee(loginWindows, question, store);
+                store[agent.LoginWindows].Add(conversation);
+                SaveStoreToHtppSession(store);
                 return;
             }
 
-            // le login existe, la conversation existe, ajouter la question
-            conversationUser.Questions.Add(question);
-            SaveToStore(store);
+            Conversation conversationExistante = null;
+            // la conversation existe dans le store, ajouter la dernière question/réponse
+            if (conversation.Id > 0)
+            {
+                conversationExistante = store[agent.LoginWindows]
+                   .FirstOrDefault(c => c.Id == conversation.Id);
+            }
+            else
+            {
+                conversationExistante = store[agent.LoginWindows]
+                    .FirstOrDefault(c => c.IdentifiantSession == conversation.IdentifiantSession);
+            }
+            if (conversationExistante != null)
+            {
+                var derniereQuestion = conversation.Agent.ConversationCourante.Questions.LastOrDefault();
+
+                conversationExistante.Questions.Add(derniereQuestion);
+            }
+
+            SaveStoreToHtppSession(store);
+
         }
 
-        private void AjouterQuestionSiConversationNonTrouvee(
-            string loginWindows, Question question, ConcurrentDictionary<string, ConcurrentBag<Conversation>> store)
+        private ConcurrentDictionary<string, ConcurrentBag<Conversation>> GetConversationStore()
         {
-            var conversations = store[loginWindows];
-            var conversation = new Conversation();
+            var store = HttpContext.Session
+                .GetJson<ConcurrentDictionary<string, ConcurrentBag<Conversation>>>(
+                    Constantes.SessionKeyConversationsStore);
 
-            conversation.Questions.Add(question);
-            conversations.Add(conversation);
+            if (store == null)
+            {
+                return new ConcurrentDictionary<string, ConcurrentBag<Conversation>>();
+            }
 
-            store[loginWindows] = conversations;
-            SaveToStore(store);
+            return store;
         }
 
-        private void AjouterQuestionPourAgentInconnu(
-            string loginWindows, Question question, ConcurrentDictionary<string, ConcurrentBag<Conversation>> store)
+
+        private void SaveStoreToHtppSession(
+            ConcurrentDictionary<string, ConcurrentBag<Conversation>> store)
         {
-
-            var conversations = new ConcurrentBag<Conversation>();
-            var conversation = new Conversation();
-
-            conversation.Questions.Add(question);
-            conversations.Add(conversation);
-
-            store[loginWindows] = conversations;
-            SaveToStore(store);
+            HttpContext.Session.SetJson(Constantes.SessionKeyConversationsStore, store);
         }
 
-        private void SaveToStore(ConcurrentDictionary<string, ConcurrentBag<Conversation>> store)
+        private Conversation? GetConversationCourante(Guid? identifiantSession)
         {
-            HttpContext.Session.SetJson<ConcurrentDictionary<string, ConcurrentBag<Conversation>>>(
-                Constantes.SessionKeyConversationsStore, store);
+            if (identifiantSession == Guid.Empty)
+            {
+                return null;
+            }
+
+            var store = GetConversationStore();
+
+            var agent = HttpContext.Session.GetJson<AgentPermissions>(Constantes.SessionKeyInfosAgent);
+
+            if (!store.ContainsKey(agent.CompteAD))
+            {
+                throw new ApplicationException("La conversation n'a pas été trouvée !");
+            }
+
+            var conversationCourante = store[agent.CompteAD]
+                .FirstOrDefault(c => c.IdentifiantSession == identifiantSession);
+
+            if (conversationCourante == null)
+            {
+                throw new ApplicationException("La conversation n'a pas été trouvée !");
+            }
+
+            return conversationCourante;
         }
 
+        private async Task<bool> EffacerConversationEnSession(Guid identifiantSession)
+        {
+            // le login Windows de l'agent n'est pas connu du dictionnaire, ajouter clé/valeur = login/conversation
+            var store = GetConversationStore();
+
+            Agent agent = await GetAgent();
+
+            if (!store.ContainsKey(agent.LoginWindows))
+            {
+                throw new ApplicationException("L'agent n'a pas été trouvé dans la session serveur !");
+            }
+
+            var conversationCourante = store[agent.LoginWindows]
+                .FirstOrDefault(c => c.IdentifiantSession == identifiantSession);
+
+            var conversations = store[agent.LoginWindows];
+            
+            var result=conversations.TryTake(out conversationCourante);
+
+            SaveStoreToHtppSession(store);
+
+            return result;
+
+        }
     }
 }
 

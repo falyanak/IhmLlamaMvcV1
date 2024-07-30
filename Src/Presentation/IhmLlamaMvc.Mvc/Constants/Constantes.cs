@@ -15,7 +15,8 @@ public class Constantes
 
     // clé de session Http
     public const string SessionKeyConversationsStore = "_ConversationsStore";
-    public const string SessionKeyInfosUser = "_InfosUser";
+    public const string SessionKeyInfosAgent = "_InfosAgent";
     public const string SessionKeyUserConversations = "_UserConversations";
+    public const string SessionKeyListeModelesIa = "_ListeModelesIa";
 
 }

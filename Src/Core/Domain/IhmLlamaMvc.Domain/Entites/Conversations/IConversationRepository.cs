@@ -1,10 +1,14 @@
-﻿using IhmLlamaMvc.SharedKernel.Primitives.Result;
+﻿using IhmLlamaMvc.Domain.Entites.Questions;
+using IhmLlamaMvc.SharedKernel.Primitives.Result;
 
 namespace IhmLlamaMvc.Domain.Entites.Conversations
 {
     public interface IConversationRepository
     {
-        void CreerConversation(Conversation conversation);
+        Task<Result<Conversation>> SauvegarderConversationEnBase(Conversation? conversation);
+
+        Task<Result<Question>> SauvegarderQuestionEnBase(Question derniereQuestion);
+
         Task<Result<IReadOnlyList<Conversation>>> ListerConversationAgent(string loginWindows);
 
         void SupprimerUneConversation(int conversationId);

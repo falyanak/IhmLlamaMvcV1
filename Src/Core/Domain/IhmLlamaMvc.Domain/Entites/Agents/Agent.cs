@@ -1,5 +1,6 @@
 ﻿using IhmLlamaMvc.Domain.Entites.Conversations;
 using IhmLlamaMvc.SharedKernel.Primitives;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IhmLlamaMvc.Domain.Entites.Agents
 {
@@ -18,5 +19,8 @@ namespace IhmLlamaMvc.Domain.Entites.Agents
         public string Prenom { get; set; }
         public string LoginWindows { get; set; }
         public List<Conversation> Conversations { get; set; }
+
+        [NotMapped]
+        public Conversation? ConversationCourante { get; set; }
     }
 }

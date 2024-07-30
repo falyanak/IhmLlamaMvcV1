@@ -10,7 +10,7 @@ public static class Constantes
     //    public const string foodexConfiguration = "FoodexConfiguration";
 
     // appsettings keys
-    public const string connectionString = "ApplicationSettings:ConnectionString";
+    public const string connectionString = "ApplicationSettings:ConnectionStrings:DefaultConnection2";
     public const string hasReferenceTechnique = "HasReferenceTechnique";
 
     public const string cacheConfiguration = "CacheConfiguration";

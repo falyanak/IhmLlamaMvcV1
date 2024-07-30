@@ -1,6 +1,8 @@
 ﻿@model IhmLlamaMvc.Mvc.ViewModels.Conversation.ConversationViewModel
 
 <input asp-for="InitialesAgent" type="hidden" />
+<input asp-for="ConversationId" type="hidden" />
+<input asp-for="IdentifiantSession" type="hidden" />
 
 <div class="left-sidebar-grid">
 
@@ -61,6 +63,9 @@
 
 <div id="mapconversation"
      data-url-soumettre-formulaire-link="@Url.Content("~/Home/PoserQuestion")"
+     data-url-supprimer-conversation-link="@Url.Content("~/Home/SupprimerConversationEnSession")"
+     data-url-sauvegarder-conversation-link="@Url.Content("~/Home/SauvegarderConversation")"
+
      data-url-initiales-user="@Url.Content(@Model.InitialesAgent)"
      data-icon-path-ollama="@Url.Content("~/images/ollama.png")"
      data-icon-path-phi="@Url.Content("~/images/phi.png")"

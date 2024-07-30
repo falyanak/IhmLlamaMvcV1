@@ -4,6 +4,7 @@ using IhmLlamaMvc.Persistence.Constants;
 using IhmLlamaMvc.Persistence.EF;
 using IhmLlamaMvc.SharedKernel.Primitives;
 using IhmLlamaMvc.SharedKernel.Primitives.Result;
+using Microsoft.EntityFrameworkCore;
 using SiccrfDataAccess.Nuget.Interfaces;
 using System.Data;
 using System.Diagnostics;
@@ -29,12 +30,23 @@ public  class AgentRepository : IAgentRepository
 
     //    parameters.Add("@NOM", dbType: DbType.String, value: agent.Nom.Trim(), direction: ParameterDirection.Input);
     //    parameters.Add("@PRENOM", dbType: DbType.String, value: agent.Prenom.Trim(), direction: ParameterDirection.Input);
-   
+
     //    var result = await _dapperDataAccessService
     //        .ExecSqlQuerySingleAsync<Agent>(Constantes.SpCreerAgent, parameters);
 
     //    return result;
     //}
+
+    public async Task<Result<Agent?>> RechercherUnAgent(string loginWindows)
+    {
+          var agent=  await _dBContext.Agents
+              .Include(a=>a.Conversations)
+              .ThenInclude(c=>c.Questions)
+              .FirstOrDefaultAsync(a=>a.LoginWindows==loginWindows);
+   
+        return agent;
+    }
+
 
     public async Task<Result<Agent>> CreerAgent(Agent agent)
     {

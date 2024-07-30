@@ -6,27 +6,27 @@ namespace IhmLlamaMvc.Domain.Entites.Questions
 {
     public class Question : EntityBase<int>
     {
+        public Question()
+        {
+        }
+        public Question(string libelle, Reponse reponse, Conversation? conversation)
+        {
+            Libelle = libelle;
+            Reponse = reponse;
+            Conversation = conversation;
+        }
+
         public Question(string libelle)
         {
             Libelle = libelle;
         }
-        public Question(string libelle, Conversation conversation)
-        {
-            Libelle = libelle;
-            Conversation = conversation;
-        }
-        public Question(string libelle, Conversation conversation, Reponse reponse)
-        {
-            Libelle = libelle;
-            Conversation = conversation;
-            Reponse = reponse;
-        }
+     
 
         public string Libelle { get; set; }
 
 
         public Reponse Reponse { get; set; }
 
-        public Conversation Conversation { get; set; }
+        public Conversation? Conversation { get; set; }
     }
 }

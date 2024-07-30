@@ -5,6 +5,7 @@ using IhmLlamaMvc.Persistence.EF;
 using IhmLlamaMvc.Persistence.Extensions;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Serilog;
 using System.Configuration;
 
@@ -20,9 +21,9 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddControllersWithViews();
-    //.AddNewtonsoftJson(
-    //o=>o.SerializerSettings
+    //.AddNewtonsoftJson(o => o.SerializerSettings
     //    .ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
 
     // SonarQube ajout SSL/TLS
     // authentification

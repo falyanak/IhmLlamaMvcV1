@@ -1,5 +1,6 @@
 ﻿using IhmLlamaMvc.Domain.Entites.Questions;
 using IhmLlamaMvc.SharedKernel.Primitives;
+using Newtonsoft.Json;
 
 namespace IhmLlamaMvc.Domain.Entites.Reponses
 {
@@ -12,7 +13,8 @@ namespace IhmLlamaMvc.Domain.Entites.Reponses
 
         public string Libelle { get; set; }
 
-    //    public int QuestionId { get; set; } // Required foreign key property
+        //    public int QuestionId { get; set; } // Required foreign key property
+
         public Question QuestionPosee { get; set; }
     }
 }

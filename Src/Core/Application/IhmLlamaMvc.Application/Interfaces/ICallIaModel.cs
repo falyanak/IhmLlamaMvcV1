@@ -1,4 +1,6 @@
-﻿namespace IhmLlamaMvc.Application.Interfaces
+﻿using IhmLlamaMvc.Domain.Entites.Questions;
+
+namespace IhmLlamaMvc.Application.Interfaces
 {
     public interface ICallIaModel
     {

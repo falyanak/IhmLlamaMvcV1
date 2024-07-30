@@ -35,9 +35,20 @@ public class BaseController : Controller
         var agentPermissions = await GetAgentPermissions();
 
         HttpContext.Session.SetJson<AgentPermissions>(
-            Constantes.SessionKeyInfosUser, agentPermissions);
+            Constantes.SessionKeyInfosAgent, agentPermissions);
 
         return agentPermissions;
 
+    }
+    public async Task<Domain.Entites.Agents.Agent> GetAgent()
+    {
+        var agentPermissions = HttpContext.Session.GetJson<AgentPermissions>(Constantes.SessionKeyInfosAgent);
+
+        if (agentPermissions == null)
+        {
+            agentPermissions = await GetInfosAgent();
+        }
+
+        return new Domain.Entites.Agents.Agent(agentPermissions.Nom, agentPermissions.Prenom, agentPermissions.CompteAD);
     }
 }

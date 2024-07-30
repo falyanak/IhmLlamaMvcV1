@@ -5,7 +5,7 @@ window.onload = function () {
     document.getElementById("resetButton").addEventListener("click", function () { resetConversation(); });
     document.getElementById("searchForm").addEventListener("submit", function (event) { postData(event); });
     document.getElementById("ModeleId").addEventListener("change", function () { resetConversation(); });
-
+    document.getElementById("saveButton").addEventListener("click", function () { SauvegarderConversation(); });
     // ajout évènement click aux boutons de l'historique
     setTimeout(() => {
         document.querySelectorAll(".deleteChat").forEach(i => i.addEventListener(
@@ -98,6 +98,12 @@ async function postData(event) {
 
     const modeleId = document.getElementById("ModeleId").value;
     formData.append("ModeleId", modeleId);
+
+    const conversationId = document.getElementById("ConversationId").value;
+    formData.append("ConversationId", conversationId);
+
+    const identifiantSession = document.getElementById("IdentifiantSession").value;
+    formData.append("IdentifiantSession", identifiantSession);
     // console.log(formData);
 
     const url = $('#mapconversation').data('url-soumettre-formulaire-link');
@@ -118,7 +124,10 @@ async function postData(event) {
             throw new Error("Une erreur s'est produite !");
         }
 
-        //      alert(result);
+        //    alert(result);
+
+        document.getElementById("IdentifiantSession").value = result.identifiantSession;
+        alert(`IdentifiantSession = ${document.getElementById("IdentifiantSession").value}`);
 
         // rendre l'IHM disponible pour la saisie
         preventInputData(false);
@@ -130,7 +139,7 @@ async function postData(event) {
         showQuestion();
 
         // afficher la réponse
-        showResponse(result);
+        showResponse(result.reponse);
 
         //    document.getElementsByClassName("left-sidebar-grid").style.gridTemplateRows = "auto";
         document.getElementById("Question").value = "";
@@ -160,7 +169,7 @@ function errorFunc() {
     alert('error');
 }
 
-function resetConversation() {
+async function resetConversation() {
     // Vide la zone de texte
     document.getElementById("Question").value = "";
     document.getElementById("Question").style.height = "41px";
@@ -171,7 +180,128 @@ function resetConversation() {
         parent.firstChild.remove()
     }
 
+    // effacer les champs cachés
+    //document.getElementById("ConversationId").value = 0;
+
+    // effacer la conversation en session serveur
+    const identifiantSession = document.getElementById("IdentifiantSession").value
+    const result = await SupprimerConversationEnSession(identifiantSession);
+
+  //  alert(`Retour appelant après suppression conversation = ${result.reponse}`);
+    // effacer le champ
+    document.getElementById("IdentifiantSession").value = 0;
+
     document.getElementById("Question").focus();
+}
+
+async function SupprimerConversationEnSession(sessionIdentifiant) {
+    console.log(`sessionIdentifiant = ${sessionIdentifiant}`)
+    // empêcher la saisie pendant la soumission du formulaire
+    preventInputData(true);
+
+    // afficher le sablier
+    showBusyIndicator();
+
+    const url = $('#mapconversation').data('url-supprimer-conversation-link');
+    //    const sessionIdentifiant = document.getElementById("IdentifiantSession").value;
+
+    const data = { "IdentifiantSession": sessionIdentifiant };
+
+    let errorResponse;
+    let result = null;
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(data)
+        });
+
+        result = await response.json();
+      
+ //       console.log("result:", result);
+
+        if (!response.ok) {
+            errorResponse = result;
+            throw new Error("Une erreur s'est produite !");
+        }
+
+        // rendre l'IHM disponible pour la saisie
+        preventInputData(false);
+
+        // cacher l'indicateur de chargement
+        hideBusyIndicator();
+
+    } catch (error) {
+        console.log("Error:", error);
+
+        //extraire les erreurs au format object{ code: string, message : string }
+        if (errorResponse && errorResponse.errors) {
+            const errorList = errorResponse.errors;
+            showAlert("Une erreur est survenue", "message", "danger", errorList,
+                { autoClose: false })
+        }
+        else {
+            const errorList = [{ code: "Une erreur s'est produite", message: error }];
+            showAlert("Une erreur est survenue", "message", "danger", errorList,
+                { autoClose: false })
+        }
+    }
+    return result;
+}
+
+async function SauvegarderConversation() {
+    // empêcher la saisie pendant la soumission du formulaire
+    preventInputData(true);
+
+    // afficher le sablier
+    showBusyIndicator();
+
+    const url = $('#mapconversation').data('url-sauvegarder-conversation-link');
+    const identifiantSession = document.getElementById("IdentifiantSession").value;
+    const data = new { IdentifantSession: identifiantSession };
+    var errorResponse;
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            body: data
+        });
+
+        const result = await response.json();
+        // console.log("Success:", result);
+
+        if (!response.ok) {
+            errorResponse = result;
+            throw new Error("Une erreur s'est produite !");
+        }
+
+        alert(result);
+        document.getElementById("ConversationId").value = result.conversationId;
+
+        // rendre l'IHM disponible pour la saisie
+        preventInputData(false);
+
+        // cacher l'indicateur de chargement
+        hideBusyIndicator();
+
+
+    } catch (error) {
+        console.log("Error:", error);
+
+        //extraire les erreurs au format object{ code: string, message : string }
+        if (errorResponse && errorResponse.errors) {
+            const errorList = errorResponse.errors;
+            showAlert("Une erreur est survenue", "message", "danger", errorList,
+                { autoClose: false })
+        }
+        else {
+            const errorList = [{ code: "Une erreur s'est produite", message: error }];
+            showAlert("Une erreur est survenue", "message", "danger", errorList,
+                { autoClose: false })
+        }
+    }
 }
 
 function preventInputData(etat = true) {
