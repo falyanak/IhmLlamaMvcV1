@@ -180,15 +180,16 @@ async function resetConversation() {
         parent.firstChild.remove()
     }
 
-    // effacer les champs cachés
-    //document.getElementById("ConversationId").value = 0;
+  
 
     // effacer la conversation en session serveur
     const identifiantSession = document.getElementById("IdentifiantSession").value
     const result = await SupprimerConversationEnSession(identifiantSession);
 
   //  alert(`Retour appelant après suppression conversation = ${result.reponse}`);
-    // effacer le champ
+    // effacer les champs cachés
+
+    document.getElementById("ConversationId").value = 0;
     document.getElementById("IdentifiantSession").value = 0;
 
     document.getElementById("Question").focus();
