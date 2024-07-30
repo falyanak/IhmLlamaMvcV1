@@ -127,7 +127,7 @@ async function postData(event) {
         //    alert(result);
 
         document.getElementById("IdentifiantSession").value = result.identifiantSession;
-        alert(`IdentifiantSession = ${document.getElementById("IdentifiantSession").value}`);
+     //   alert(`IdentifiantSession = ${document.getElementById("IdentifiantSession").value}`);
 
         // rendre l'IHM disponible pour la saisie
         preventInputData(false);
